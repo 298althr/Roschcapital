@@ -1,8 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 
-const DATA_DIR = path.join(process.cwd(), 'backend/data');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DATA_DIR = path.join(__dirname, '../../data');
 
 // Simple Decimal polyfill for services expecting Prisma.Decimal
 export class Decimal {
