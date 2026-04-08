@@ -466,6 +466,7 @@ router.get('/users/:userId', verifyAuth, verifyAdmin, async (req, res) => {
 router.get('/users/:userId/transactions', verifyAuth, verifyAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const where = { userId };
