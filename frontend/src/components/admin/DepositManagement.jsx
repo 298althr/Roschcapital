@@ -43,7 +43,7 @@ export const DepositManagement = () => {
       
       // Fetch pending transfers
       try {
-        const transfersResponse = await apiClient.get(`/mybanker/transfers?status=PENDING`);
+        const transfersResponse = await apiClient.get(`/admin/transfers/pending`);
         setTransfers(transfersResponse.transfers || []);
       } catch (err) {
         console.log('Transfers endpoint not available');

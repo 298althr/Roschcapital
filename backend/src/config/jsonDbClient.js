@@ -273,11 +273,23 @@ class JsonModel {
     // Handle relations (basic simulation)
     if (include) {
       for (const rel of Object.keys(include)) {
+        if (!include[rel]) continue; // If strictly false, skip
+
         const relTable = this._mapRelationToTable(rel);
         const relModel = new JsonModel(relTable);
-        const foreignKey = this._getForeignKey(this.name, rel);
-        if (foreignKey) {
-            result[rel] = relModel._read().filter(i => i[foreignKey] === item.id).map(r => this._processResult(r));
+        
+        // Backward relations (e.g. Loan -> User, Transaction -> Account)
+        if (rel === 'user' || rel === 'account') {
+            const parentIdKey = rel === 'user' ? 'userId' : 'accountId';
+            const parentItem = relModel._read().find(i => i.id === item[parentIdKey]);
+            result[rel] = parentItem ? this._processResult(parentItem, typeof include[rel] === 'object' ? include[rel].include : undefined, typeof include[rel] === 'object' ? include[rel].select : undefined) : null;
+        } 
+        // Forward relations (e.g. User -> Accounts, User -> Loans)
+        else {
+            const foreignKey = this._getForeignKey(this.name, rel);
+            if (foreignKey) {
+                result[rel] = relModel._read().filter(i => i[foreignKey] === item.id).map(r => this._processResult(r));
+            }
         }
       }
     }

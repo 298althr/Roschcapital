@@ -10,6 +10,14 @@ import path from 'path';
 
 const router = express.Router();
 
+// Helper function for calculations
+const normalizeMoneyValue = (val) => {
+  if (!val) return 0;
+  if (typeof val === 'number') return val;
+  if (typeof val === 'object' && val.value) return Number(val.value);
+  return Number(val);
+};
+
 /**
  * Middleware to verify admin access
  */
@@ -325,35 +333,7 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
           accountStatus: true,
           kycStatus: true,
           totalSentAmount: true,
-          createdAt: true,
-          accounts: {
-            select: {
-              id: true,
-              accountNumber: true,
-              accountName: true,
-              accountType: true,
-              balance: true,
-              availableBalance: true,
-              pendingBalance: true,
-              isPrimary: true,
-              isActive: true,
-              currency: true,
-              cryptoSymbol: true,
-              cryptoAddress: true
-            }
-          },
-          debitCards: {
-            select: { id: true }
-          },
-          creditCards: {
-            select: { id: true }
-          },
-          _count: {
-            select: {
-              accounts: true,
-              backupCodes: true
-            }
-          }
+          createdAt: true
         },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
@@ -362,26 +342,29 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
       prisma.user.count({ where })
     ]);
 
-    // Format users with balance from primary account and include all accounts
-    const formattedUsers = users.map(user => {
+    // Format users with balance from primary account and include all accounts natively mapped
+    const formattedUsers = await Promise.all(users.map(async user => {
+      const userAccounts = await prisma.account.findMany({ where: { userId: user.id } });
+      const userDebitCards = await prisma.debitCard.findMany({ where: { userId: user.id } });
+      const userCreditCards = await prisma.creditCard.findMany({ where: { userId: user.id } });
+      
       // Sort accounts with primary first
-      const userAccounts = user.accounts || [];
       const sortedAccounts = [...userAccounts].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
       const primaryAccount = sortedAccounts.find(acc => acc.isPrimary);
-      const totalBalance = userAccounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0);
+      const totalBalance = userAccounts.reduce((sum, acc) => sum + normalizeMoneyValue(acc.balance), 0);
       
       return {
         ...user,
         accounts: sortedAccounts,
         balance: totalBalance,
-        primaryBalance: primaryAccount?.balance || 0,
+        primaryBalance: primaryAccount ? normalizeMoneyValue(primaryAccount.balance) : 0,
         accountType: primaryAccount?.accountType || 'N/A',
         accountsCount: userAccounts.length,
-        cardsCount: ((user.debitCards || []).length) + ((user.creditCards || []).length),
+        cardsCount: userDebitCards.length + userCreditCards.length,
         debitCards: undefined,
         creditCards: undefined
       };
-    });
+    }));
 
     return res.json({
       users: formattedUsers,
@@ -1464,32 +1447,17 @@ router.delete('/transactions/:transactionId', verifyAuth, verifyAdmin, async (re
 router.get('/users-with-transactions', verifyAuth, verifyAdmin, async (req, res) => {
   try {
     const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        profilePhoto: true,
-        accountStatus: true,
-        accounts: {
-          select: {
-            id: true,
-            accountNumber: true,
-            accountName: true,
-            balance: true,
-            _count: {
-              select: { transactions: true }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-
-    const usersWithCounts = users.map(user => ({
-      ...user,
-      totalTransactions: user.accounts.reduce((sum, acc) => sum + acc._count.transactions, 0),
-      totalBalance: user.accounts.reduce((sum, acc) => sum + Number(acc.balance), 0)
+    const usersWithCounts = await Promise.all(users.map(async user => {
+      const userAccounts = await prisma.account.findMany({ where: { userId: user.id } });
+      const totalTransactions = await prisma.transaction.count({ where: { userId: user.id } });
+      const totalBalance = userAccounts.reduce((sum, acc) => sum + normalizeMoneyValue(acc.balance), 0);
+      
+      return {
+        ...user,
+        accounts: userAccounts,
+        totalTransactions,
+        totalBalance
+      };
     }));
 
     return res.json({ users: usersWithCounts });
