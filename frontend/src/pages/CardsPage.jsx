@@ -5,6 +5,7 @@ import CardDetailsComponent from '../components/CardDetailsComponent';
 import UserDashboardLayout from '../components/layout/UserDashboardLayout';
 import { Modal } from '../components/ui/Modal';
 import { ActionButton } from '../components/ui/ActionButton';
+import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { CreditCard, Plus, TrendingUp, TrendingDown, ArrowUpRight, Wallet, DollarSign, Clock, Eye, EyeOff, X } from 'lucide-react';
 
 /**
@@ -242,9 +243,6 @@ export const CardsPage = () => {
     );
   }
 
-import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
-
-// ... inside the component
   if (loading && cards.length === 0) {
     return (
       <UserDashboardLayout>
