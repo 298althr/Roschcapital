@@ -11,12 +11,7 @@ import path from 'path';
 const router = express.Router();
 
 // Helper function for calculations
-const normalizeMoneyValue = (val) => {
-  if (!val) return 0;
-  if (typeof val === 'number') return val;
-  if (typeof val === 'object' && val.value) return Number(val.value);
-  return Number(val);
-};
+// (Removed duplicate normalizeMoneyValue)
 
 /**
  * Middleware to verify admin access
