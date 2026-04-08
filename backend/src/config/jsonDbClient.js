@@ -65,6 +65,14 @@ class JsonModel {
     return this._processResult(data[0], include, select);
   }
 
+  async count(params = {}) {
+    let data = this._read();
+    if (params.where) {
+      data = this._filter(data, params.where);
+    }
+    return data.length;
+  }
+
   async findMany({ where, include, select, orderBy, take, skip }) {
     let data = this._read();
     if (where) {
@@ -393,6 +401,17 @@ class PartitionedJsonModel extends JsonModel {
     if (params.where) data = this._filter(data, params.where);
     if (params.orderBy) data = this._sort(data, params.orderBy);
     return this._processResult(data[0], params.include, params.select);
+  }
+
+  async count(params = {}) {
+    let data;
+    if (params.where && params.where[this.partitionKey]) {
+      data = this._readPartition(params.where[this.partitionKey]);
+    } else {
+      data = this._readAll();
+    }
+    if (params.where) data = this._filter(data, params.where);
+    return data.length;
   }
 
   async findMany(params) {
