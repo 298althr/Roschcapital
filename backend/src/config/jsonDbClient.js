@@ -413,7 +413,7 @@ class PartitionedJsonModel extends JsonModel {
     if (params.where) data = this._filter(data, params.where);
     if (params.orderBy) data = this._sort(data, params.orderBy);
     if (params.skip) data = data.slice(params.skip);
-    if (params.take) data = data.slice(Take ? take : 100); // Default take
+    if (params.take) data = data.slice(0, params.take);
     
     return data.map(item => this._processResult(item, params.include, params.select));
   }
@@ -479,6 +479,7 @@ class JsonDb {
   constructor() {
     this.user = new JsonModel('users');
     this.account = new JsonModel('accounts');
+    this.card = new JsonModel('cards');
     this.transaction = new PartitionedJsonModel('transactions', 'userId');
     this.session = new JsonModel('sessions');
     this.securityQuestion = new JsonModel('security_questions');
