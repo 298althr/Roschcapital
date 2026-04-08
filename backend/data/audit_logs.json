@@ -1,1 +1,272 @@
-[]
+[
+  {
+    "id": "ca0596a357134ef23",
+    "createdAt": "2026-04-08T17:38:27.342Z",
+    "updatedAt": "2026-04-08T17:49:36.757Z",
+    "userId": "usr_c1f0c6f45057",
+    "action": "LOGIN",
+    "description": "User michael.perez0@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c671780055abc3619",
+    "createdAt": "2026-04-08T17:36:33.908Z",
+    "updatedAt": "2026-04-08T17:49:36.799Z",
+    "userId": "usr_a76eba59735f",
+    "action": "LOGIN",
+    "description": "User oliver.gonzalez1@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c143b92c2c5370c33",
+    "createdAt": "2026-04-08T17:34:16.401Z",
+    "updatedAt": "2026-04-08T17:49:36.830Z",
+    "userId": "usr_ba90f1d75f29",
+    "action": "LOGIN",
+    "description": "User liam.anderson2@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c5f417577b1939d56",
+    "createdAt": "2026-04-08T17:40:29.348Z",
+    "updatedAt": "2026-04-08T17:49:36.873Z",
+    "userId": "usr_be9130b032ae",
+    "action": "LOGIN",
+    "description": "User ethan.taylor3@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c676e2a162c734fb9",
+    "createdAt": "2026-04-08T17:37:07.979Z",
+    "updatedAt": "2026-04-08T17:49:36.895Z",
+    "userId": "usr_db8ed419da03",
+    "action": "LOGIN",
+    "description": "User logan.perez4@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c440a5eb0d81f1a5a",
+    "createdAt": "2026-04-08T17:48:56.010Z",
+    "updatedAt": "2026-04-08T17:49:36.935Z",
+    "userId": "usr_19397cd8f4c0",
+    "action": "LOGIN",
+    "description": "User emily.moore5@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c69051670e7e5ac04",
+    "createdAt": "2026-04-08T17:34:44.510Z",
+    "updatedAt": "2026-04-08T17:49:36.977Z",
+    "userId": "usr_98a1c4a00f28",
+    "action": "LOGIN",
+    "description": "User alexander.moore6@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "cd3d5e5d5c590ced6",
+    "createdAt": "2026-04-08T17:43:26.291Z",
+    "updatedAt": "2026-04-08T17:49:37.002Z",
+    "userId": "usr_4ea444404e18",
+    "action": "LOGIN",
+    "description": "User emily.lopez7@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "ce6779846864f38d2",
+    "createdAt": "2026-04-08T17:41:47.644Z",
+    "updatedAt": "2026-04-08T17:49:37.039Z",
+    "userId": "usr_3440e39c4484",
+    "action": "LOGIN",
+    "description": "User alexander.smith8@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "cbe5b823e8d4f463d",
+    "createdAt": "2026-04-08T17:42:16.160Z",
+    "updatedAt": "2026-04-08T17:49:37.071Z",
+    "userId": "usr_53f9c96e5869",
+    "action": "LOGIN",
+    "description": "User michael.taylor9@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c55086e0d56c8a08e",
+    "createdAt": "2026-04-08T17:49:25.465Z",
+    "updatedAt": "2026-04-08T17:49:37.105Z",
+    "userId": "usr_8a2fac2f1868",
+    "action": "LOGIN",
+    "description": "User ava.garcia10@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c309557995363eb21",
+    "createdAt": "2026-04-08T17:40:43.742Z",
+    "updatedAt": "2026-04-08T17:49:37.129Z",
+    "userId": "usr_b6bce9a41040",
+    "action": "LOGIN",
+    "description": "User william.brown11@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "ca073a813aac37c4b",
+    "createdAt": "2026-04-08T17:43:19.623Z",
+    "updatedAt": "2026-04-08T17:49:37.163Z",
+    "userId": "usr_fe78c732d315",
+    "action": "LOGIN",
+    "description": "User olivia.miller12@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c60e684c3362487ba",
+    "createdAt": "2026-04-08T17:36:59.017Z",
+    "updatedAt": "2026-04-08T17:49:37.197Z",
+    "userId": "usr_bbf9f15ed47f",
+    "action": "LOGIN",
+    "description": "User noah.martin13@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "cf5b7f8d3900f47bc",
+    "createdAt": "2026-04-08T17:38:02.826Z",
+    "updatedAt": "2026-04-08T17:49:37.227Z",
+    "userId": "usr_056a56ba0611",
+    "action": "LOGIN",
+    "description": "User sophia.taylor14@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c83ef54b10889868d",
+    "createdAt": "2026-04-08T17:38:30.112Z",
+    "updatedAt": "2026-04-08T17:49:37.263Z",
+    "userId": "usr_078772fa144a",
+    "action": "LOGIN",
+    "description": "User evelyn.davis15@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c8ba187d5e88c1f08",
+    "createdAt": "2026-04-08T17:45:59.889Z",
+    "updatedAt": "2026-04-08T17:49:37.287Z",
+    "userId": "usr_67c3bdc79da0",
+    "action": "LOGIN",
+    "description": "User abigail.martinez16@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "ca4cb6d9cd675370f",
+    "createdAt": "2026-04-08T17:48:45.159Z",
+    "updatedAt": "2026-04-08T17:49:37.313Z",
+    "userId": "usr_44fffe400031",
+    "action": "LOGIN",
+    "description": "User ethan.anderson17@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c337104da7c13fda3",
+    "createdAt": "2026-04-08T17:44:59.921Z",
+    "updatedAt": "2026-04-08T17:49:37.344Z",
+    "userId": "usr_c3604fb98e0c",
+    "action": "LOGIN",
+    "description": "User isabella.white18@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c2e100366113988ea",
+    "createdAt": "2026-04-08T17:46:26.013Z",
+    "updatedAt": "2026-04-08T17:49:37.386Z",
+    "userId": "usr_96fa302b5e11",
+    "action": "LOGIN",
+    "description": "User liam.hernandez19@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c6e508a5cbd8125bf",
+    "createdAt": "2026-04-08T17:46:17.260Z",
+    "updatedAt": "2026-04-08T17:49:37.421Z",
+    "userId": "usr_903632256fcd",
+    "action": "LOGIN",
+    "description": "User emma.moore20@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c502cd56bd6de57fd",
+    "createdAt": "2026-04-08T17:43:26.856Z",
+    "updatedAt": "2026-04-08T17:49:37.459Z",
+    "userId": "usr_c8c5785ac1b0",
+    "action": "LOGIN",
+    "description": "User charlotte.martin21@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c3746d33644adbe60",
+    "createdAt": "2026-04-08T17:44:10.144Z",
+    "updatedAt": "2026-04-08T17:49:37.489Z",
+    "userId": "usr_455f24de3105",
+    "action": "LOGIN",
+    "description": "User ava.jones22@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c691f99278f64dfab",
+    "createdAt": "2026-04-08T17:48:48.084Z",
+    "updatedAt": "2026-04-08T17:49:37.523Z",
+    "userId": "usr_bedaf4ebf3b8",
+    "action": "LOGIN",
+    "description": "User mia.lee23@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c0851f23ec1f879cf",
+    "createdAt": "2026-04-08T17:41:46.022Z",
+    "updatedAt": "2026-04-08T17:49:37.547Z",
+    "userId": "usr_40fa0ec52ffd",
+    "action": "LOGIN",
+    "description": "User isabella.thomas24@example.com securely logged in via web platform",
+    "severity": "LOW",
+    "ipAddress": "192.168.1.4"
+  },
+  {
+    "id": "c2b96ea65674233a0",
+    "createdAt": "2026-04-08T17:49:37.547Z",
+    "updatedAt": "2026-04-08T17:49:37.548Z",
+    "userId": "admin_primary",
+    "action": "SUSPICIOUS_ACTIVITY",
+    "description": "Multiple failed login attempts outside typical geo perimeter",
+    "severity": "HIGH",
+    "ipAddress": "109.22.45.1"
+  },
+  {
+    "id": "cc3c5d596794bcb79",
+    "createdAt": "2026-04-08T17:49:37.548Z",
+    "updatedAt": "2026-04-08T17:49:37.548Z",
+    "userId": "admin_primary",
+    "action": "FAILED_LOGIN",
+    "description": "Login failed for Brokk9284@gmail.com: Invalid password",
+    "severity": "MEDIUM",
+    "ipAddress": "109.22.45.1"
+  }
+]

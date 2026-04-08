@@ -200,9 +200,9 @@ class JsonModel {
     return { count: initialLength - newTable.length };
   }
 
-  async count({ where }) {
+  async count(params = {}) {
     let data = this._read();
-    if (where) data = this._filter(data, where);
+    if (params.where) data = this._filter(data, params.where);
     return data.length;
   }
 
