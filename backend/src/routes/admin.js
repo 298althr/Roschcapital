@@ -365,9 +365,10 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
     // Format users with balance from primary account and include all accounts
     const formattedUsers = users.map(user => {
       // Sort accounts with primary first
-      const sortedAccounts = [...user.accounts].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
+      const userAccounts = user.accounts || [];
+      const sortedAccounts = [...userAccounts].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
       const primaryAccount = sortedAccounts.find(acc => acc.isPrimary);
-      const totalBalance = user.accounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0);
+      const totalBalance = userAccounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0);
       
       return {
         ...user,
@@ -375,8 +376,8 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
         balance: totalBalance,
         primaryBalance: primaryAccount?.balance || 0,
         accountType: primaryAccount?.accountType || 'N/A',
-        accountsCount: user.accounts.length,
-        cardsCount: (user.debitCards?.length || 0) + (user.creditCards?.length || 0),
+        accountsCount: userAccounts.length,
+        cardsCount: ((user.debitCards || []).length) + ((user.creditCards || []).length),
         debitCards: undefined,
         creditCards: undefined
       };
