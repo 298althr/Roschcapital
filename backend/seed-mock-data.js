@@ -10,17 +10,23 @@ const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "
 function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
+
 function randomAmount(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function randomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString();
+}
+
 async function run() {
-  console.log('🌱 Starting comprehensive data seed...');
+  console.log('🌱 Starting comprehensive mathematical data seed (27 Users)...');
 
   const passHash = await bcrypt.hash('Password123!', 10);
+  const now = new Date();
 
-  // 1. Generate 25 users
-  for(let i=0; i<25; i++) {
+  // 1. Generate precisely 27 distinct users
+  for(let i=0; i<27; i++) {
     const fn = randomChoice(firstNames);
     const ln = randomChoice(lastNames);
     const email = `${fn.toLowerCase()}.${ln.toLowerCase()}${i}@example.com`;
@@ -47,15 +53,14 @@ async function run() {
 
     const userId = reqUser.id;
 
-    // 2. Generate Accounts (1 Checking, 1 Savings usually)
-    const chkBal = randomAmount(500, 15000);
+    // 2. Mathematically sound Base Account
     const checkingAcc = await prisma.account.create({
       data: {
         userId,
         accountType: 'CHECKING',
         accountNumber: `CHK${randomAmount(1000, 9999)}`,
-        balance: chkBal,
-        availableBalance: chkBal,
+        balance: 0,
+        availableBalance: 0,
         pendingBalance: 0,
         accountName: 'Primary Checking',
         currency: 'USD',
@@ -64,11 +69,67 @@ async function run() {
       }
     });
 
-    let savBal = 0;
-    let savAcc = null;
+    // 3. Transactions - Mathematically strict timeline simulation
+    const txCount = randomAmount(25, 45);
+    let cumulativeBalance = 0;
+    
+    // Inject starting anchor balance
+    const startDeposit = randomAmount(5000, 25000);
+    cumulativeBalance += startDeposit;
+    await prisma.transaction.create({
+        data: {
+          userId,
+          accountId: checkingAcc.id,
+          amount: startDeposit,
+          type: 'CREDIT',
+          description: `Initial Payroll Setup`,
+          status: 'COMPLETED',
+          reference: `REF${crypto.randomBytes(4).toString('hex').toUpperCase()}`,
+          createdAt: new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000).toISOString()
+        }
+    });
+
+    for (let t=0; t<txCount; t++) {
+      const isDeposit = Math.random() > 0.7;
+      let amt = 0;
+      let desc = '';
+      
+      if (isDeposit) {
+          amt = randomAmount(500, 3000);
+          cumulativeBalance += amt;
+          desc = randomChoice(['Salary Deposit', 'External Transfer Credit', 'Dividend Payout']);
+      } else {
+          amt = randomAmount(20, 800);
+          cumulativeBalance -= amt;
+          desc = randomChoice(['POS Purchase Apple', 'Utility Electric', 'Supermarket', 'Amazon Shopping']);
+      }
+      
+      await prisma.transaction.create({
+        data: {
+          userId,
+          accountId: checkingAcc.id,
+          amount: amt,
+          type: isDeposit ? 'CREDIT' : 'DEBIT',
+          description: desc,
+          status: 'COMPLETED',
+          reference: `REF${crypto.randomBytes(4).toString('hex').toUpperCase()}`,
+          createdAt: randomDate(new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000), now)
+        }
+      });
+    }
+
+    // Write deterministic ledger net balances
+    checkingAcc.balance = cumulativeBalance;
+    checkingAcc.availableBalance = cumulativeBalance;
+    await prisma.account.update({ 
+      where: { id: checkingAcc.id }, 
+      data: { balance: cumulativeBalance, availableBalance: cumulativeBalance }
+    });
+
+    // Savings Account Allocation
     if (isVIP || Math.random() > 0.5) {
-      savBal = randomAmount(10000, 250000);
-      savAcc = await prisma.account.create({
+      const savBal = randomAmount(10000, 250000);
+      await prisma.account.create({
         data: {
           userId,
           accountType: 'SAVINGS',
@@ -84,32 +145,60 @@ async function run() {
       });
     }
 
-    // 3. Transactions (approx 15-30 per user)
-    const txCount = randomAmount(15, 30);
-    let runningChk = chkBal;
-    
-    for (let t=0; t<txCount; t++) {
-      const isDeposit = Math.random() > 0.6;
-      const amt = randomAmount(10, 2000);
-      
-      const type = isDeposit ? 'CREDIT' : 'DEBIT';
-      const desc = isDeposit ? 'Direct Deposit / Transfer' : 'POS Purchase / Bill Pay';
-      
-      await prisma.transaction.create({
-        data: {
-          userId,
-          accountId: checkingAcc.id,
-          amount: amt,
-          type,
-          description: `${desc} ${t+1}`,
-          status: 'COMPLETED',
-          reference: `REF${crypto.randomBytes(4).toString('hex').toUpperCase()}`,
-          createdAt: new Date(Date.now() - randomAmount(0, 30 * 24 * 60 * 60 * 1000)).toISOString() // past 30 days
-        }
-      });
+    // 4. Heavy Financial Architecture Instantiation
+    if (isVIP || Math.random() > 0.4) {
+       await prisma.loan.create({
+           data: {
+             userId,
+             loanNumber: `L${randomAmount(10000, 99999)}`,
+             loanType: randomChoice(['PERSONAL', 'MORTGAGE', 'AUTO']),
+             principalAmount: randomAmount(15000, 300000),
+             remainingBalance: randomAmount(5000, 150000),
+             interestRate: 5.5,
+             termMonths: 72,
+             monthlyPayment: randomAmount(250, 1500),
+             status: randomChoice(['ACTIVE', 'PENDING']),
+             nextPaymentDate: new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000).toISOString()
+           }
+       });
+       
+       await prisma.fixedDeposit.create({
+           data: {
+             userId,
+             depositNumber: `FD${randomAmount(10000, 99999)}`,
+             principalAmount: randomAmount(50000, 1500000),
+             maturityAmount: randomAmount(55000, 1600000),
+             interestRate: 4.5,
+             termMonths: 12,
+             interestPayout: 'MATURITY',
+             status: 'ACTIVE',
+             startDate: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+             maturityDate: new Date(now.getTime() + 330 * 24 * 60 * 60 * 1000).toISOString()
+           }
+       });
     }
 
-    // 4. Cards
+    // 5. Instantiating Cross-Institutional Requests
+    if (Math.random() > 0.3) {
+        await prisma.transferRequest.create({
+            data: {
+                userId,
+                reference: `TX${randomAmount(10000, 99999)}`,
+                type: 'EXTERNAL',
+                amount: randomAmount(1000, 8000),
+                currency: 'USD',
+                destinationBank: randomChoice(['Chase Bank', 'Bank of America', 'Wells Fargo', 'Citibank', 'Barclays']),
+                accountName: `${fn} ${ln}`,
+                accountNumber: `********${randomAmount(1000, 9999)}`,
+                routingNumber: '021000021',
+                swiftCode: '',
+                status: randomChoice(['PENDING', 'APPROVED', 'COMPLETED', 'DECLINED']),
+                transferMethod: 'WIRE'
+            }
+        });
+    }
+
+    // 6. Security Identifiers and Access Interfaces
     await prisma.debitCard.create({
       data: {
         userId,
@@ -123,7 +212,6 @@ async function run() {
       }
     });
 
-    // 5. KYC Docs if PENDING
     if (kycStatus === 'PENDING') {
       await prisma.kycDocument.create({
         data: {
@@ -135,7 +223,6 @@ async function run() {
       });
     }
 
-    // 6. Audit Logs
     await prisma.auditLog.create({
       data: {
         userId,
@@ -148,7 +235,7 @@ async function run() {
     });
   }
 
-  // Create an explicit SUSPICIOUS_ACTIVITY log for the admin to see
+  // Explicit Alarm Simulation for Admin Dashboard Diagnostics
   const adminAcc = prisma.user._read().find(u => u.isAdmin);
   if (adminAcc) {
      await prisma.auditLog.create({
@@ -166,7 +253,7 @@ async function run() {
         data: {
           userId: adminAcc.id,
           action: 'FAILED_LOGIN',
-          description: `Login failed for ${adminAcc.email}: Invalid password`,
+          description: `Login failed for ${adminAcc.email}: Geo-block active`,
           severity: 'MEDIUM',
           ipAddress: '109.22.45.1',
           createdAt: new Date().toISOString()
@@ -174,7 +261,7 @@ async function run() {
      });
   }
 
-  console.log('✅ Value populated! Dashboard now has deep, extensive relational data.');
+  console.log('✅ Architecture completely built! Fully scaled robust 27 entity mockup constructed.');
 }
 
 run().catch(console.error);
