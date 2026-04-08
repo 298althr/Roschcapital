@@ -1,0 +1,543 @@
+# ============================================================================
+# ROSCH CAPITAL BANK - STAFF INSTRUCTIONS
+# ============================================================================
+# This document provides comprehensive instructions for bank staff members
+# who manage the banking system. Read carefully before taking any actions.
+# ============================================================================
+
+---
+project:
+  name: "Rosch Capital Bank"
+  repository: "https://github.com/gonnyzalowski-crypto/Gatwick_bank"
+  production_url: "https://roschcapital.com"
+  backend_url: "https://gatwickbank-production.up.railway.app"
+  deployment_platform: "Railway"
+  deployment_method: "GitHub Auto-Deploy (push to main branch)"
+
+---
+# ============================================================================
+# ROLE 1: BANK MANAGER (CODER)
+# ============================================================================
+# Responsibilities: Account management, system fixes, deployments, testing
+# ============================================================================
+
+bank_manager:
+  role: "Bank Manager & Developer"
+  access_level: "Admin"
+  
+  # ---------------------------------------------------------------------------
+  # ADMIN DASHBOARD ACCESS
+  # ---------------------------------------------------------------------------
+  admin_access:
+    url: "https://roschcapital.com/mybanker"
+    credentials:
+      email: "Brokk9284@gmail.com"
+      password: "Americana12@"
+      security_answers:
+        - "fluffy"
+        - "london"
+        - "smith"
+  
+  # ---------------------------------------------------------------------------
+  # ACCOUNT MANAGEMENT OPERATIONS
+  # ---------------------------------------------------------------------------
+  account_management:
+    
+    view_all_users:
+      location: "Admin Dashboard > Users"
+      actions:
+        - "View all registered users"
+        - "Search users by name, email, or account number"
+        - "View user details including KYC status"
+        - "Edit user information"
+        - "Disable/Enable user accounts"
+    
+    manage_accounts:
+      location: "Admin Dashboard > Accounts"
+      actions:
+        - "View all bank accounts (Savings, Checking, Crypto, Business)"
+        - "Credit accounts directly (Admin Deposit)"
+        - "Debit accounts (with reason)"
+        - "View account balances and transaction history"
+        - "Freeze/Unfreeze accounts"
+      
+      credit_account_steps:
+        1: "Navigate to Admin Dashboard > Deposits"
+        2: "Click 'Create Deposit'"
+        3: "Select user from dropdown"
+        4: "Select target account"
+        5: "Enter amount and reference"
+        6: "Submit - funds are credited immediately"
+    
+    manage_cards:
+      location: "Admin Dashboard > Cards"
+      actions:
+        - "View all debit and credit cards"
+        - "Approve/Decline credit card applications"
+        - "Set credit limits and APR"
+        - "Freeze/Unfreeze cards"
+        - "Edit daily/monthly spending limits"
+      
+      approve_credit_card_steps:
+        1: "Navigate to Admin Dashboard > Cards > Credit Applications"
+        2: "Review pending applications"
+        3: "Set credit limit (e.g., $5000)"
+        4: "Set APR (e.g., 18.99%)"
+        5: "Click Approve or Decline with reason"
+    
+    manage_deposits:
+      location: "Admin Dashboard > Deposits"
+      actions:
+        - "View all pending deposits"
+        - "Review payment proof uploads"
+        - "Approve deposits (credits user account)"
+        - "Reject deposits (with reason)"
+      
+      approve_deposit_steps:
+        1: "Navigate to Admin Dashboard > Deposits"
+        2: "Filter by 'Pending' status"
+        3: "Click on deposit to view details"
+        4: "Review payment proof image"
+        5: "Click 'Approve' to credit account or 'Reject' with reason"
+    
+    manage_withdrawals:
+      location: "Admin Dashboard > Withdrawals"
+      actions:
+        - "View all pending withdrawals"
+        - "Process withdrawals manually"
+        - "Approve/Reject withdrawal requests"
+    
+    manage_transfers:
+      location: "Admin Dashboard > Transfers"
+      actions:
+        - "View all transfer requests"
+        - "Approve international transfers"
+        - "Process domestic transfers"
+        - "View transfer history"
+    
+    manage_kyc:
+      location: "Admin Dashboard > KYC"
+      actions:
+        - "View pending KYC documents"
+        - "Approve/Reject identity verification"
+        - "View uploaded documents (ID, Passport, Utility Bill)"
+    
+    manage_payment_gateways:
+      location: "Admin Dashboard > Configure > Payment Gateways"
+      actions:
+        - "Add new payment gateways (Crypto, PayPal, Bank Transfer)"
+        - "Edit gateway settings (wallet address, QR code)"
+        - "Enable/Disable gateways"
+        - "Set min/max deposit limits"
+
+  # ---------------------------------------------------------------------------
+  # CODEBASE MANAGEMENT & DEPLOYMENT
+  # ---------------------------------------------------------------------------
+  codebase_management:
+    
+    repository_structure:
+      root: "RoschCapitalBank/"
+      backend: "backend/"
+      frontend: "frontend/"
+      database: "backend/prisma/"
+    
+    technology_stack:
+      backend:
+        - "Node.js + Express"
+        - "Prisma ORM"
+        - "PostgreSQL database"
+        - "JWT authentication"
+        - "bcrypt password hashing"
+      frontend:
+        - "React + Vite"
+        - "TailwindCSS"
+        - "React Router"
+        - "Lucide React icons"
+      deployment:
+        - "Railway (auto-deploy from GitHub)"
+        - "Redis (caching)"
+        - "PostgreSQL (database)"
+    
+    # -------------------------------------------------------------------------
+    # HOW TO FIX BUGS IN ONE PROMPT
+    # -------------------------------------------------------------------------
+    bug_fix_workflow:
+      description: "Complete workflow for fixing bugs and deploying"
+      
+      step_1_identify:
+        action: "Identify the bug"
+        details:
+          - "Check browser console for frontend errors"
+          - "Check Railway logs for backend errors"
+          - "Reproduce the issue and note exact steps"
+      
+      step_2_locate:
+        action: "Locate the code"
+        frontend_files:
+          pages: "frontend/src/pages/"
+          components: "frontend/src/components/"
+          api_client: "frontend/src/lib/apiClient.js"
+          context: "frontend/src/context/"
+        backend_files:
+          routes: "backend/src/routes/"
+          services: "backend/src/services/"
+          middleware: "backend/src/middleware/"
+          prisma_schema: "backend/prisma/schema.prisma"
+      
+      step_3_fix:
+        action: "Make the fix"
+        guidelines:
+          - "Keep changes minimal and focused"
+          - "Don't remove existing comments"
+          - "Follow existing code style"
+          - "Test locally if possible"
+      
+      step_4_commit:
+        action: "Commit and push"
+        commands:
+          - "git add -A"
+          - "git commit -m 'fix: description of the fix'"
+          - "git push origin main"
+      
+      step_5_deploy:
+        action: "Deployment is automatic"
+        details:
+          - "Railway auto-deploys on push to main"
+          - "Backend service: Gatwick_bank"
+          - "Frontend service: serene-reverence"
+          - "Wait 2-3 minutes for deployment"
+      
+      step_6_verify:
+        action: "Verify the fix"
+        commands:
+          - "railway logs --service Gatwick_bank"
+          - "railway logs --service serene-reverence"
+        manual_testing:
+          - "Visit https://roschcapital.com"
+          - "Test the specific feature that was fixed"
+          - "Check browser console for errors"
+    
+    # -------------------------------------------------------------------------
+    # COMMON FIXES REFERENCE
+    # -------------------------------------------------------------------------
+    common_fixes:
+      
+      frontend_not_loading:
+        symptoms: "Blank page, 404 errors"
+        likely_cause: "Build failed or missing dependencies"
+        fix_steps:
+          - "Check railway logs --service serene-reverence --build"
+          - "Ensure package.json has 'type': 'module'"
+          - "Check for syntax errors in JSX files"
+      
+      api_errors_401:
+        symptoms: "Unauthorized errors, login issues"
+        likely_cause: "Token expired or CORS issue"
+        fix_steps:
+          - "Check backend/src/middleware/auth.js"
+          - "Verify CORS_ORIGIN in Railway environment variables"
+          - "Check token expiration in backend/src/utils/jwt.js"
+      
+      database_errors:
+        symptoms: "Prisma errors, missing fields"
+        likely_cause: "Schema mismatch or migration needed"
+        fix_steps:
+          - "Check backend/prisma/schema.prisma"
+          - "Run: npx prisma migrate dev --name fix_description"
+          - "Run: npx prisma generate"
+      
+      crypto_conversion_wrong:
+        symptoms: "BTC/USD values incorrect"
+        likely_cause: "Exchange rate calculation inverted"
+        fix_file: "frontend/src/pages/CryptoAccountPage.jsx"
+        fix_details: "Ensure dividing USD by rate to get BTC, not multiplying"
+    
+    # -------------------------------------------------------------------------
+    # RAILWAY CLI COMMANDS
+    # -------------------------------------------------------------------------
+    railway_commands:
+      login: "railway login"
+      link_project: "railway link"
+      view_logs_backend: "railway logs --service Gatwick_bank"
+      view_logs_frontend: "railway logs --service serene-reverence"
+      view_build_logs: "railway logs --build"
+      redeploy: "railway redeploy -y"
+      view_variables: "railway variables"
+      open_dashboard: "railway open"
+
+---
+# ============================================================================
+# ROLE 2: INTERFACE & EXPERIENCE MANAGER
+# ============================================================================
+# Responsibilities: Support tickets, user experience, customer service
+# ============================================================================
+
+interface_manager:
+  role: "Interface & Experience Manager"
+  access_level: "Admin"
+  
+  # ---------------------------------------------------------------------------
+  # SUPPORT TICKET MANAGEMENT
+  # ---------------------------------------------------------------------------
+  support_tickets:
+    location: "Admin Dashboard > Support Tickets"
+    url: "https://roschcapital.com/mybanker"
+    
+    ticket_workflow:
+      step_1: "View all tickets in the Support Tickets section"
+      step_2: "Filter by status: Open, In Progress, Resolved, Closed"
+      step_3: "Click on a ticket to view conversation"
+      step_4: "Read user's message and understand the issue"
+      step_5: "Take appropriate action (see actions below)"
+      step_6: "Reply to user with resolution or update"
+      step_7: "Update ticket status accordingly"
+    
+    ticket_statuses:
+      OPEN: "New ticket, not yet addressed"
+      IN_PROGRESS: "Being worked on"
+      RESOLVED: "Issue fixed, awaiting user confirmation"
+      CLOSED: "Ticket completed"
+    
+    priority_levels:
+      LOW: "General inquiries, non-urgent"
+      MEDIUM: "Account questions, minor issues"
+      HIGH: "Transaction problems, access issues"
+      URGENT: "Security concerns, fraud, locked accounts"
+    
+    categories:
+      ACCOUNT: "Account-related issues"
+      TRANSACTION: "Transfer, deposit, withdrawal issues"
+      CARD: "Debit/Credit card problems"
+      TECHNICAL: "Website bugs, login issues"
+      OTHER: "General inquiries"
+    
+    # -------------------------------------------------------------------------
+    # ACTIONS TO TAKE BASED ON TICKET TYPE
+    # -------------------------------------------------------------------------
+    ticket_actions:
+      
+      account_locked:
+        action: "Unlock user account"
+        steps:
+          - "Go to Admin Dashboard > Users"
+          - "Find the user by email"
+          - "Click 'Enable Account'"
+          - "Reply to ticket confirming unlock"
+      
+      forgot_password:
+        action: "Guide user through password reset"
+        steps:
+          - "Direct user to /forgot-password page"
+          - "User enters email"
+          - "User enters backup code"
+          - "User sets new password"
+          - "If no backup code, manually reset via database"
+      
+      deposit_not_credited:
+        action: "Check and approve deposit"
+        steps:
+          - "Go to Admin Dashboard > Deposits"
+          - "Find the pending deposit"
+          - "Review payment proof"
+          - "Approve if valid, reject if fraudulent"
+          - "Reply to ticket with status"
+      
+      withdrawal_pending:
+        action: "Process withdrawal"
+        steps:
+          - "Go to Admin Dashboard > Withdrawals"
+          - "Find the pending withdrawal"
+          - "Verify user identity and amount"
+          - "Process manually or approve"
+          - "Reply to ticket with confirmation"
+      
+      card_not_working:
+        action: "Check card status"
+        steps:
+          - "Go to Admin Dashboard > Cards"
+          - "Find user's card"
+          - "Check if frozen or expired"
+          - "Unfreeze if needed"
+          - "Reply with resolution"
+      
+      kyc_pending:
+        action: "Review KYC documents"
+        steps:
+          - "Go to Admin Dashboard > KYC"
+          - "Find user's submission"
+          - "Review uploaded documents"
+          - "Approve or request resubmission"
+          - "Reply to ticket"
+      
+      website_bug:
+        action: "Escalate to Bank Manager for code fix"
+        steps:
+          - "Document the bug clearly"
+          - "Note exact steps to reproduce"
+          - "Screenshot any errors"
+          - "Create a bug report for Bank Manager"
+          - "Reply to user that issue is being investigated"
+    
+    # -------------------------------------------------------------------------
+    # RESPONSE TEMPLATES
+    # -------------------------------------------------------------------------
+    response_templates:
+      
+      greeting: |
+        Hello [User Name],
+        
+        Thank you for contacting Rosch Capital Bank support.
+        I'm reviewing your request and will assist you shortly.
+        
+        Best regards,
+        Rosch Capital Support Team
+      
+      deposit_approved: |
+        Hello [User Name],
+        
+        Great news! Your deposit of $[Amount] has been approved and 
+        credited to your account. You can now see the updated balance 
+        in your dashboard.
+        
+        Thank you for banking with Rosch Capital.
+        
+        Best regards,
+        Rosch Capital Support Team
+      
+      withdrawal_processed: |
+        Hello [User Name],
+        
+        Your withdrawal request for $[Amount] has been processed.
+        Please allow 1-3 business days for the funds to appear 
+        in your external account.
+        
+        Transaction Reference: [Reference]
+        
+        Best regards,
+        Rosch Capital Support Team
+      
+      issue_resolved: |
+        Hello [User Name],
+        
+        The issue you reported has been resolved. Please try again 
+        and let us know if you experience any further problems.
+        
+        We appreciate your patience.
+        
+        Best regards,
+        Rosch Capital Support Team
+      
+      escalated: |
+        Hello [User Name],
+        
+        Thank you for bringing this to our attention. Your issue 
+        has been escalated to our technical team for investigation.
+        
+        We will update you within 24-48 hours with a resolution.
+        
+        Best regards,
+        Rosch Capital Support Team
+
+---
+# ============================================================================
+# TESTING PROCEDURES
+# ============================================================================
+
+testing:
+  description: "Always test after making fixes"
+  
+  frontend_testing:
+    steps:
+      - "Visit https://roschcapital.com"
+      - "Open browser developer tools (F12)"
+      - "Check Console tab for JavaScript errors"
+      - "Check Network tab for failed API calls"
+      - "Test the specific feature that was fixed"
+    
+    key_pages_to_test:
+      - "/login - User login flow"
+      - "/register - New user registration"
+      - "/dashboard - Main user dashboard"
+      - "/accounts - Account list and details"
+      - "/cards - Card management"
+      - "/deposit - Deposit flow"
+      - "/withdraw - Withdrawal flow"
+      - "/transfer - Transfer money"
+      - "/mybanker - Admin dashboard"
+  
+  backend_testing:
+    steps:
+      - "Check Railway logs for errors"
+      - "Test API endpoints via browser or Postman"
+      - "Verify database operations complete"
+    
+    commands:
+      view_logs: "railway logs --service Gatwick_bank --tail 50"
+      check_health: "curl https://gatwickbank-production.up.railway.app/healthz"
+  
+  post_deployment_checklist:
+    - "✓ No build errors in Railway logs"
+    - "✓ Frontend loads without blank page"
+    - "✓ Login works for test user"
+    - "✓ Admin dashboard accessible"
+    - "✓ Specific fix verified working"
+    - "✓ No console errors in browser"
+
+---
+# ============================================================================
+# ENVIRONMENT VARIABLES (Railway)
+# ============================================================================
+
+environment_variables:
+  backend:
+    DATABASE_URL: "PostgreSQL connection string (auto-set by Railway)"
+    REDIS_URL: "Redis connection string (auto-set by Railway)"
+    JWT_SECRET: "Secret for JWT token signing"
+    NODE_ENV: "production"
+    CORS_ORIGIN: "https://roschcapital.com"
+  
+  frontend:
+    VITE_API_BASE_URL: "https://gatwickbank-production.up.railway.app/api/v1"
+
+---
+# ============================================================================
+# EMERGENCY PROCEDURES
+# ============================================================================
+
+emergency:
+  
+  site_down:
+    steps:
+      - "Check Railway dashboard for service status"
+      - "View logs: railway logs --service Gatwick_bank"
+      - "Check if database is online"
+      - "Redeploy if needed: railway redeploy -y"
+  
+  security_breach:
+    steps:
+      - "Immediately disable affected user accounts"
+      - "Change admin credentials"
+      - "Review recent transactions for fraud"
+      - "Notify affected users"
+      - "Document incident"
+  
+  database_issues:
+    steps:
+      - "Check PostgreSQL service in Railway"
+      - "View database logs"
+      - "If migration needed, run via Railway shell"
+      - "Backup data before major changes"
+
+---
+# ============================================================================
+# CONTACT & ESCALATION
+# ============================================================================
+
+escalation:
+  level_1: "Interface Manager - Support tickets, user issues"
+  level_2: "Bank Manager - Code fixes, system issues"
+  level_3: "System Administrator - Infrastructure, security"
+
+# ============================================================================
+# END OF INSTRUCTIONS
+# ============================================================================

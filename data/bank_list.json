@@ -1,0 +1,16 @@
+[
+  {
+    "id": "bank_1",
+    "bankName": "Rosch Capital Main",
+    "routingNumber": "604003000",
+    "swiftCode": "ROSCUSB3",
+    "isActive": true
+  },
+  {
+    "id": "bank_2",
+    "bankName": "JPMorgan Chase",
+    "routingNumber": "021000021",
+    "swiftCode": "CHASUS33",
+    "isActive": true
+  }
+]

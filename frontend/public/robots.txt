@@ -1,0 +1,44 @@
+# Robots.txt for Rosch Capital Bank
+# https://roschcapital.com
+
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /about
+Allow: /services
+Allow: /contact
+
+# Disallow sensitive areas
+Disallow: /dashboard
+Disallow: /accounts
+Disallow: /cards
+Disallow: /transfers
+Disallow: /settings
+Disallow: /kyc
+Disallow: /support
+Disallow: /transaction-history
+Disallow: /mybanker
+Disallow: /api/
+
+# Crawl delay (be polite to search engines)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://roschcapital.com/sitemap.xml
+
+# Google specific
+User-agent: Googlebot
+Allow: /
+Disallow: /dashboard
+Disallow: /accounts
+Disallow: /mybanker
+Disallow: /api/
+
+# Bing specific
+User-agent: Bingbot
+Allow: /
+Disallow: /dashboard
+Disallow: /accounts
+Disallow: /mybanker
+Disallow: /api/

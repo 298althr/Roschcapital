@@ -1,0 +1,25 @@
+{
+  "name": "gatwick-bank",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gatwick Bank - Full Stack Banking Application",
+  "main": "backend/src/index.js",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "start": "npm run start --workspace=backend"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "pdf-parse": "^2.4.5"
+  }
+}

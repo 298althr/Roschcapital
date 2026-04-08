@@ -1,0 +1,91 @@
+https://railway.com/dashboard
+
+https://github.com/gonnyzalowski-crypto/Gatwick_bank
+
+    gatwickbank.up.railway.app/dashboard
+
+gatwickbank.up.railway.app/mybanker
+
+use playwright to access my railway and GitHub profiles, to fix all debugging. when you commit wait for 2 minutes give feeback from the railway to be sure it has deployed, if not use the playwright to kno why not deploying, continue fixing till everywthing is wroking
+
+also use playwright to access my gatwick bank project
+
+dont waste token writing mds, only write mds at the end of achieving goals
+
+
+
+use thinking if you have it as your characteristic to achieve this
+
+
+------------------------------------------------------------------------------------------
+
+
+gatwickbank.up.railway.app/dashboard
+
+gatwickbank.up.railway.app/mybanker
+
+during testing dont write md documents
+
+use mcp playwright to enter end to end of my entire user and dashboard from the links i have pasted. test that the site has no dummy buttons, give feedback for every issue you find. 
+use thinking feature and capacity to determine the next steps, use all services and function available in the banker and user dashboard in this project.
+i have put on my auto continue, do not stop untill you access all pages, all modals and every component and page. i want to do an full audit.
+
+____________________________________________________________________________________________________
+
+from the admin end, create a user, use your descretion to enter all entery request, auto generate answers and give back to me, Full name should be Wilhelm Rybak. email should be wilhelmrybak@gmail.com, password should be entered as 'wilbak007' Phone number +1 213 653 0266. generate an adress in los angeles, CA. autogenerate security questions. 
+
+save this to memory, then when this is done, logout and login as the user you just created. create a savings account, also create a current account. 
+
+then logout as the user. login as the admin, fund those two accounts with 2million dollars each. then logout as the admin. login as the user. create a credit card and a debit card. 
+#note that a user cannot create more than 1 each of both cards. debit cards should use balance from the checking accounts. all cheking accounts are the primary accounts note that. 
+
+now create a credit card also. logout as user. now login as admin to approve the card and set its limit to maybe 11,000 dollars. now logout and login to the user end to confirm that the card is active.
+
+now make a deposit from payment page. try to deposit 2,000 dollars with btc, the admin should have set the payment gateway containing list of top performing 10 cryptocurrencies. so this is where the user needs to select one and proceed to the page where it shows the user the wallet adress code and the corresponding qr code of it. then user makes payment manually and when done clicks complete. this opens a modal showing processing. it will be logged as pending transaction on the trasaction history. this should send a request or prompt the admin in the admin dashboard to accept or decline. when admin takes action response goes back to user that transaction successful.
+
+now goto the admin end to see if that works just as i described.
+
+
+
+log all issues in the support page. send the findings as a support ticket, the admin should be requested to treat it in their admin dashboard.
+
+login to the admin dashboard to confirm
+if it is there send it here as feedback also means that the support page is functional. otherwise log it as an issue
+
+
+at the end suggest fixes for all dysfunctionality 
+
+this is how to audit, reach out to all available buttons and links, keep going till you reach success or error.
+
+
+_________________________________________________________________________________________________________________________________________________________________________________________________________
+
+Action + Snapshot Pairing
+Every time you perform an MCP action (click, type, navigate), immediately run mcp7_browser_snapshot (or mcp7_browser_take_screenshot if you prefer images). This keeps a chronological record of each interaction, page, or modal state.
+Optional Extras Per Step
+mcp7_browser_console_messages to capture new console logs after each action.
+mcp7_browser_network_requests if you need to log API traffic tied to that action.
+If text is important (e.g., errors), combine with mcp7_browser_snapshot and a short note in your summary.
+Automation Pattern
+Execute action (e.g., click).
+Immediately call snapshot tool.
+Repeat for the next action.
+This adds minimal overhead and ensures nothing is missed.
+Consistency
+Maintain the same order: Action → Snapshot → (optional console/network capture). That consistency makes it easy to audit later.
+
+instruction:
+
+
+
+____________________________________________________________________________________________________
+
+i see there are 14 issues. now, lets start doing them from beginning to end. 
+
+dont write any documentation file until we complete fixing the 14 issues and succesfully deploy to railway.
+
+auto continue till you complete.
+
+do not push to gi until you complete fixing all issues
+
+use your thinking capacity to fix it to the right end points.

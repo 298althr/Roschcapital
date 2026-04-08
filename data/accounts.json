@@ -1,0 +1,17 @@
+[
+  {
+    "id": "admin_acc_1",
+    "userId": "admin_initial",
+    "accountType": "SAVINGS",
+    "accountNumber": "7000000001",
+    "balance": 1000000,
+    "availableBalance": 1000000,
+    "pendingBalance": 0,
+    "accountName": "Treasury Account",
+    "currency": "USD",
+    "isActive": true,
+    "isPrimary": true,
+    "createdAt": "2026-04-08T08:57:54.253Z",
+    "updatedAt": "2026-04-08T08:57:54.253Z"
+  }
+]

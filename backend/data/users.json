@@ -1,0 +1,16 @@
+[
+  {
+    "id": "admin_primary",
+    "email": "Brokk9284@gmail.com",
+    "password": "$2a$10$ZVRhKeIOidxqD102wJD5NOwn6QNRQVsgGxHunzIzI.kswDwPURCNy",
+    "firstName": "Main",
+    "lastName": "Admin",
+    "isAdmin": true,
+    "accountStatus": "ACTIVE",
+    "kycStatus": "VERIFIED",
+    "routingNumber": "604003001",
+    "accountNumber": "0012345678",
+    "createdAt": "2026-04-08T09:08:36.391Z",
+    "updatedAt": "2026-04-08T09:08:36.394Z"
+  }
+]

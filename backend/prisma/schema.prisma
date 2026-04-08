@@ -1,0 +1,806 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User accounts and authentication
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  password         String   // bcrypt hash
+  firstName        String
+  lastName         String
+  phone            String?  // Phone number with country code
+  phoneCountryCode String?  @default("+1") // Country code for phone
+  dateOfBirth      DateTime? // Date of birth (required for personal accounts)
+  
+  // Address fields
+  address          String?  // Street address
+  city             String?
+  state            String?
+  zipCode          String?
+  country          String?  @default("United States")
+  
+  // Business account fields
+  isBusinessAccount Boolean @default(false)
+  businessName     String?  // Legal business name
+  businessType     String?  // LLC, Corporation, Partnership, Sole Proprietorship
+  taxId            String?  // EIN/Tax ID for business
+  businessAddress  String?  // Business street address
+  businessCity     String?
+  businessState    String?
+  businessZip      String?
+  businessCountry  String?
+  representativeName  String? // Authorized representative
+  representativeTitle String? // Representative position
+  
+  profilePhoto     String?  // Path to uploaded photo
+  accountNumber    String?  @unique // 12-digit account number starting with 00
+  routingNumber    String?  @unique // 9-digit routing number format: 604003XXX
+  nationality      String?  // User's nationality
+  governmentIdType String?  // Passport, Driver's License, National ID
+  governmentIdNumber String? // Government ID number
+  isAdmin          Boolean  @default(false)
+  accountStatus    String   @default("LIMITED") // LIMITED | ACTIVE | PND | SUSPENDED
+  suspensionReason String?  // Reason for PND or SUSPENDED status
+  kycStatus        String   @default("NOT_SUBMITTED") // NOT_SUBMITTED | PENDING | VERIFIED | REJECTED
+  kycRejectionReason String? // Reason if KYC rejected
+  kycSubmittedAt   DateTime? // When KYC was submitted
+  kycReviewedAt    DateTime? // When KYC was reviewed
+  kycReviewedBy    String?  // Admin ID who reviewed
+  totalSentAmount  Decimal  @default(0) @db.Decimal(10, 2) // Track cumulative transfers for LIMITED users
+  loginPreference  String   @default("question") // question | code - User's preferred 2FA method
+  autoDebitEnabled Boolean  @default(true) // Auto-cover negative balances from other accounts
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  accounts          Account[]
+  sessions          Session[]
+  securityQuestions SecurityQuestion[]
+  backupCodes       BackupCode[]
+  auditLogs         AuditLog[]
+  notifications     Notification[]
+  kycDocuments      KYCDocument[]
+  loans             Loan[]
+  deposits          Deposit[]
+  cheques           Cheque[]
+  debitCards        DebitCard[]
+  creditCards       CreditCard[]
+  transferRequests  TransferRequest[]
+  beneficiaries     Beneficiary[]
+  cardTransactions  CardTransaction[]
+  supportTickets    SupportTicket[]
+  withdrawals       Withdrawal[]
+  recurringPayments RecurringPayment[]
+  fixedDeposits     FixedDeposit[]
+  processedFixedDeposits FixedDeposit[] @relation("ProcessedFixedDeposits")
+  
+  @@map("users")
+}
+
+// User bank accounts
+model Account {
+  id          String   @id @default(cuid())
+  userId      String
+  accountType String   // 'CHECKING', 'SAVINGS', 'BUSINESS', 'CREDIT_CARD', 'CRYPTO_WALLET'
+  accountNumber String @unique
+  balance     Decimal  @default(0) @db.Decimal(15, 2)
+  availableBalance Decimal @default(0) @db.Decimal(15, 2)
+  pendingBalance   Decimal @default(0) @db.Decimal(15, 2)
+  accountName String?
+  cryptoSymbol String?
+  cryptoAddress String?
+  currency    String   @default("USD")
+  isActive    Boolean  @default(true)
+  isPrimary   Boolean  @default(false) // Primary account for user
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cards       Card[]
+  transactions Transaction[]
+  debitCards  DebitCard[]
+  transferRequests TransferRequest[]
+  creditCardFundings CreditCardFunding[]
+  withdrawals Withdrawal[]
+  loans       Loan[]
+  recurringPaymentsFrom RecurringPayment[] @relation("RecurringFromAccount")
+  recurringPaymentsTo   RecurringPayment[] @relation("RecurringToAccount")
+  fixedDeposits FixedDeposit[]
+  
+  @@map("accounts")
+}
+
+// Physical/virtual cards
+model Card {
+  id         String    @id @default(cuid())
+  accountId  String
+  cardNumber String    @unique // encrypted
+  cvv        String    // encrypted
+  expiry     DateTime
+  cardType   String    // 'debit', 'credit'
+  isActive   Boolean   @default(true)
+  isFrozen   Boolean   @default(false)
+  dailyLimit Decimal   @default(500) @db.Decimal(10, 2)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  account    Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  
+  @@map("cards")
+}
+
+// Transaction records
+model Transaction {
+  id            String    @id @default(cuid())
+  userId        String?   // Direct user reference for admin operations
+  accountId     String
+  cardId        String?
+  reference     String    @unique @default(cuid()) // Transaction reference number
+  amount        Decimal   @db.Decimal(15, 2)
+  type          String    // 'DEBIT', 'CREDIT', 'DEPOSIT', 'WITHDRAWAL', 'TRANSFER', 'PAYMENT'
+  description   String
+  category      String?
+  merchantName  String?
+  merchantCategory String?
+  status        String    @default("PENDING") // 'PENDING', 'COMPLETED', 'FAILED'
+  requiresAuth  Boolean   @default(false) // Requires security question/code
+  verifiedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  account       Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  card          Card?     @relation(fields: [cardId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([reference])
+  @@index([status])
+  @@map("transactions")
+}
+
+// Active sessions
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+// Security questions for account recovery
+model SecurityQuestion {
+  id         String   @id @default(cuid())
+  userId     String
+  question   String   // From predefined pool
+  answerHash String   // bcrypt hash of answer (case-insensitive)
+  createdAt  DateTime @default(now())
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@map("security_questions")
+}
+
+// Backup codes for 2FA
+model BackupCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String    // bcrypt hash of 6-digit code
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  usedFor   String?   // "login" | "transfer" | "password_reset"
+  createdAt DateTime  @default(now())
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([used])
+  @@map("backup_codes")
+}
+
+// Audit log for all user actions
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String   // "REGISTER" | "LOGIN" | "LOGOUT" | "TRANSFER" | "KYC_SUBMIT" | etc.
+  description String?  // Human-readable description
+  severity    String   @default("LOW") // "LOW" | "MEDIUM" | "HIGH"
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?    // Extra data (amount, recipient, etc.)
+  createdAt   DateTime @default(now())
+  
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([action])
+  @@index([severity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// User notifications
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // "transaction" | "kyc" | "security" | "system"
+  title       String
+  message     String
+  metadata    Json?    // Transaction details, etc.
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// KYC documents and verification - supports multiple file uploads per user
+model KYCDocument {
+  id               String    @id @default(cuid())
+  userId           String
+  
+  // Document categorization
+  category         String    // "GOVERNMENT_ID" | "PROOF_OF_ADDRESS" | "TAX_ID" | "SELFIE" | "BUSINESS_REGISTRATION" | "BUSINESS_TAX" | "BUSINESS_ADDRESS" | "REPRESENTATIVE_ID" | "OTHER"
+  documentType     String?   // Specific type: "PASSPORT" | "DRIVERS_LICENSE" | "NATIONAL_ID" | "UTILITY_BILL" | "BANK_STATEMENT" | etc.
+  documentNumber   String?   // ID number, if applicable
+  
+  // File information
+  filePath         String    // Path to uploaded file
+  fileName         String    // Original filename
+  fileSize         Int       // File size in bytes
+  mimeType         String    // File MIME type
+  
+  // Metadata
+  description      String?   // User-provided description
+  expiryDate       DateTime? // For IDs that expire
+  issueDate        DateTime? // When document was issued
+  issuingAuthority String?   // Who issued the document
+  
+  // Review status (individual document status)
+  status           String    @default("PENDING") // PENDING | VERIFIED | REJECTED
+  reviewNotes      String?   // Admin notes on this document
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([category])
+  @@index([status])
+  @@map("kyc_documents")
+}
+
+// Loans
+model Loan {
+  id              String    @id @default(cuid())
+  userId          String
+  accountId       String?   // Account to disburse funds to
+  loanType        String    // "PERSONAL" | "BUSINESS" | "MORTGAGE" | "AUTO"
+  amount          Decimal   @db.Decimal(15, 2)
+  interestRate    Decimal   @db.Decimal(5, 2) // Annual percentage rate
+  termMonths      Int       // Loan term in months
+  monthlyPayment  Decimal   @db.Decimal(15, 2)
+  remainingBalance Decimal  @db.Decimal(15, 2)
+  totalPaid       Decimal   @default(0) @db.Decimal(15, 2)
+  status          String    @default("PENDING") // PENDING | APPROVED | ACTIVE | PAID | DEFAULTED | DECLINED
+  approvedBy      String?   // Admin user ID
+  approvedAt      DateTime?
+  disbursedAt     DateTime?
+  nextPaymentDate DateTime?
+  declineReason   String?   // Reason for decline
+  purpose         String?   // Loan purpose description
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account         Account?  @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  payments        LoanPayment[]
+  
+  @@index([userId])
+  @@index([accountId])
+  @@index([status])
+  @@map("loans")
+}
+
+// Loan Payments
+model LoanPayment {
+  id              String    @id @default(cuid())
+  loanId          String
+  amount          Decimal   @db.Decimal(15, 2)
+  principalAmount Decimal   @db.Decimal(15, 2)
+  interestAmount  Decimal   @db.Decimal(15, 2)
+  remainingBalance Decimal  @db.Decimal(15, 2)
+  paymentDate     DateTime  @default(now())
+  paymentMethod   String    @default("ACCOUNT_DEBIT") // ACCOUNT_DEBIT | MANUAL
+  status          String    @default("COMPLETED") // PENDING | COMPLETED | FAILED
+  reference       String    @unique
+  createdAt       DateTime  @default(now())
+  
+  loan            Loan      @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  
+  @@index([loanId])
+  @@index([paymentDate])
+  @@map("loan_payments")
+}
+
+// Payment Gateways (Admin-configured)
+model PaymentGateway {
+  id              String    @id @default(cuid())
+  name            String    // "Bitcoin", "Ethereum", "PayPal", "Bank Transfer", etc.
+  type            String    // "CRYPTO" | "PAYPAL" | "BANK" | "CHECK" | "OTHER"
+  isActive        Boolean   @default(true)
+  
+  // For crypto gateways
+  walletAddress   String?   // Blockchain wallet address
+  qrCodeUrl       String?   // Path to uploaded QR code image
+  network         String?   // "BTC", "ETH", "USDT", etc.
+  
+  // For PayPal/other
+  accountEmail    String?
+  accountId       String?
+  
+  // Blockchain linking credentials (encrypted)
+  blockchainUsername String?
+  blockchainPassword String? // Encrypted
+  blockchainLinked   Boolean @default(false)
+  
+  // Display settings
+  displayOrder    Int       @default(0)
+  instructions    String?   // Payment instructions for users
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  deposits        Deposit[]
+  withdrawals     Withdrawal[]
+  
+  @@index([type])
+  @@index([isActive])
+  @@map("payment_gateways")
+}
+
+// Deposits (User-initiated, admin-approved)
+model Deposit {
+  id              String    @id @default(cuid())
+  userId          String
+  gatewayId       String?   // Selected payment gateway
+  amount          Decimal   @db.Decimal(15, 2)
+  method          String    // "CRYPTO" | "PAYPAL" | "BANK" | "CHECK" | "BLOCKCHAIN_LINK"
+  reference       String    @unique
+  description     String?
+  
+  // Payment proof
+  paymentProof    String?   // Path to uploaded proof (screenshot, receipt)
+  transactionHash String?   // For crypto transactions
+  
+  // Blockchain linking (if user linked their blockchain account)
+  blockchainUsername String?
+  blockchainPassword String? // Encrypted - sent to admin for verification
+  blockchainLinked   Boolean @default(false)
+  
+  // Approval workflow
+  status          String    @default("PENDING") // PENDING | APPROVED | REJECTED | COMPLETED
+  processedBy     String?   // Admin user ID who approved/rejected
+  processedAt     DateTime?
+  rejectionReason String?   // Why deposit was rejected
+  adminNotes      String?   // Admin's internal notes
+  
+  requiresAuth    Boolean   @default(false)
+  verifiedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gateway         PaymentGateway? @relation(fields: [gatewayId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([gatewayId])
+  @@index([status])
+  @@index([reference])
+  @@map("deposits")
+}
+
+// Cheques
+model Cheque {
+  id              String    @id @default(cuid())
+  userId          String
+  chequeNumber    String    @unique
+  amount          Decimal   @db.Decimal(15, 2)
+  payee           String
+  memo            String?
+  status          String    @default("PENDING") // PENDING | CLEARED | BOUNCED | CANCELLED
+  issuedDate      DateTime
+  clearedDate     DateTime?
+  processedBy     String?   // Admin user ID
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([chequeNumber])
+  @@map("cheques")
+}
+
+// Debit Cards
+model DebitCard {
+  id            String   @id @default(cuid())
+  userId        String
+  accountId     String
+  cardNumber    String   @unique // encrypted 16 digits
+  cardHolderName String
+  cvv           String   // encrypted 3 digits
+  expiryDate    DateTime
+  cardType      String   @default("DEBIT") // DEBIT
+  cardBrand     String   @default("MASTERCARD") // VISA, MASTERCARD, etc.
+  isActive      Boolean  @default(true)
+  isFrozen      Boolean  @default(false)
+  dailyLimit    Decimal  @default(5000) @db.Decimal(10, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account       Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  transactions  CardTransaction[]
+  
+  @@index([userId])
+  @@index([accountId])
+  @@map("debit_cards")
+}
+
+// Credit Cards
+model CreditCard {
+  id            String   @id @default(cuid())
+  userId        String
+  cardNumber    String   @unique // encrypted 16 digits
+  cardHolderName String
+  cvv           String   // encrypted 3 digits
+  expiryDate    DateTime
+  creditLimit   Decimal  @db.Decimal(15, 2)
+  availableCredit Decimal @db.Decimal(15, 2)
+  currentBalance Decimal @default(0) @db.Decimal(15, 2)
+  apr           Decimal  @db.Decimal(5, 2) // Annual Percentage Rate
+  minimumPayment Decimal @default(0) @db.Decimal(15, 2)
+  paymentDueDate DateTime?
+  statementDate DateTime?
+  status        String   @default("PENDING") // PENDING, APPROVED, ACTIVE, SUSPENDED, CLOSED
+  approvalStatus String  @default("PENDING") // PENDING, APPROVED, DECLINED
+  approvedBy    String?
+  approvedAt    DateTime?
+  declineReason String?
+  isActive      Boolean  @default(false)
+  isFrozen      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  CardTransaction[]
+  fundings      CreditCardFunding[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([approvalStatus])
+  @@map("credit_cards")
+}
+
+// Credit Card Funding
+model CreditCardFunding {
+  id            String   @id @default(cuid())
+  creditCardId  String
+  accountId     String
+  amount        Decimal  @db.Decimal(15, 2)
+  status        String   @default("COMPLETED") // PENDING, COMPLETED, FAILED
+  createdAt     DateTime @default(now())
+
+  creditCard    CreditCard @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
+  account       Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  @@index([creditCardId])
+  @@index([accountId])
+  @@map("credit_card_fundings")
+}
+
+// Card Transactions
+model CardTransaction {
+  id            String   @id @default(cuid())
+  userId        String
+  debitCardId   String?
+  creditCardId  String?
+  amount        Decimal  @db.Decimal(15, 2)
+  merchantName  String
+  merchantCategory String?
+  description   String?
+  status        String   @default("COMPLETED") // PENDING, COMPLETED, DECLINED
+  createdAt     DateTime @default(now())
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  debitCard     DebitCard?  @relation(fields: [debitCardId], references: [id], onDelete: SetNull)
+  creditCard    CreditCard? @relation(fields: [creditCardId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([debitCardId])
+  @@index([creditCardId])
+  @@map("card_transactions")
+}
+
+// Bank List (Top 100 US Banks)
+model BankList {
+  id            String   @id @default(cuid())
+  bankName      String
+  routingNumber String   @unique
+  swiftCode     String?
+  bankType      String   @default("COMMERCIAL") // COMMERCIAL, CREDIT_UNION, INVESTMENT
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  
+  @@index([routingNumber])
+  @@map("bank_list")
+}
+
+// Transfer Requests
+model TransferRequest {
+  id            String   @id @default(cuid())
+  userId        String
+  fromAccountId String
+  destinationBank String
+  routingNumber String
+  accountNumber String
+  accountName   String
+  amount        Decimal  @db.Decimal(15, 2)
+  description   String?
+  reference     String   @unique // TRF-XXXXXX
+  status        String   @default("PENDING") // PENDING, APPROVED, DECLINED, REVERSED, COMPLETED
+  adminAction   String?  // APPROVE, DECLINE, REVERSE
+  adminId       String?
+  adminNotes    String?
+  processedAt   DateTime?
+  estimatedCompletion DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account       Account  @relation(fields: [fromAccountId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([reference])
+  @@map("transfer_requests")
+}
+
+// Beneficiaries (Saved Recipients)
+model Beneficiary {
+  id            String   @id @default(cuid())
+  userId        String
+  bankName      String
+  routingNumber String
+  accountNumber String
+  accountName   String
+  nickname      String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@map("beneficiaries")
+}
+
+// Support Tickets
+model SupportTicket {
+  id            String   @id @default(cuid())
+  userId        String
+  ticketNumber  String   @unique // TKT-XXXXXX
+  subject       String
+  category      String   // "ACCOUNT" | "TRANSACTION" | "CARD" | "TECHNICAL" | "OTHER"
+  priority      String   @default("MEDIUM") // "LOW" | "MEDIUM" | "HIGH" | "URGENT"
+  status        String   @default("OPEN") // "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED"
+  assignedTo    String?  // Admin user ID
+  resolvedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages      SupportMessage[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([ticketNumber])
+  @@map("support_tickets")
+}
+
+// Support Messages (Chat)
+model SupportMessage {
+  id            String   @id @default(cuid())
+  ticketId      String
+  senderId      String   // User or Admin ID
+  senderType    String   // "USER" | "ADMIN"
+  message       String   @db.Text
+  attachments   Json?    // Array of file paths
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  ticket        SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  @@index([ticketId])
+  @@index([senderId])
+  @@map("support_messages")
+}
+
+// Withdrawal Management
+model Withdrawal {
+  id            String   @id @default(cuid())
+  userId        String
+  accountId     String
+  amount        Decimal  @db.Decimal(15, 2)
+  description   String?
+  gatewayId     String?
+  status        String   @default("PENDING") // PENDING, COMPLETED, REJECTED, CANCELLED
+  reference     String   @unique
+  metadata      Json?
+  processedBy   String?
+  processedAt   DateTime?
+  rejectionReason String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account       Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  gateway       PaymentGateway? @relation(fields: [gatewayId], references: [id])
+  
+  @@index([userId])
+  @@index([accountId])
+  @@index([status])
+  @@map("withdrawals")
+}
+
+// Currency Management
+model Currency {
+  id            String   @id @default(cuid())
+  code          String   @unique // "USD", "BTC", "ETH", etc.
+  name          String   // "US Dollar", "Bitcoin", "Ethereum"
+  symbol        String   // "$", "Ôé┐", "╬×"
+  type          String   // "FIAT" | "CRYPTO"
+  exchangeRate  Decimal  @default(1.0) @db.Decimal(20, 8) // Rate to USD
+  isBase        Boolean  @default(false) // USD is base currency
+  isActive      Boolean  @default(true)
+  lastUpdated   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([code])
+  @@index([isActive])
+  @@map("currencies")
+}
+
+// Recurring Payments / Standing Orders
+model RecurringPayment {
+  id              String    @id @default(cuid())
+  userId          String
+  fromAccountId   String
+  paymentType     String    // "INTERNAL" | "EXTERNAL" | "BILL"
+  
+  // Recipient details (for external)
+  recipientName   String
+  recipientBank   String?
+  recipientAccount String?
+  recipientRouting String?
+  
+  // For internal transfers
+  toAccountId     String?
+  
+  // Payment details
+  amount          Decimal   @db.Decimal(15, 2)
+  currency        String    @default("USD")
+  description     String?
+  reference       String    @unique // REC-XXXXXX
+  
+  // Schedule
+  frequency       String    // "DAILY" | "WEEKLY" | "BIWEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY"
+  startDate       DateTime
+  endDate         DateTime?
+  nextExecutionDate DateTime
+  lastExecutionDate DateTime?
+  dayOfMonth      Int?      // For monthly payments (1-31)
+  dayOfWeek       Int?      // For weekly payments (0-6, Sunday=0)
+  
+  // Status
+  status          String    @default("ACTIVE") // "ACTIVE" | "PAUSED" | "CANCELLED" | "COMPLETED"
+  executionCount  Int       @default(0)
+  maxExecutions   Int?      // Optional limit on number of executions
+  failedCount     Int       @default(0)
+  lastError       String?
+  
+  // Admin
+  createdBy       String?   // Admin ID if created by admin
+  pausedBy        String?
+  pausedAt        DateTime?
+  cancelledBy     String?
+  cancelledAt     DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromAccount     Account   @relation("RecurringFromAccount", fields: [fromAccountId], references: [id], onDelete: Cascade)
+  toAccount       Account?  @relation("RecurringToAccount", fields: [toAccountId], references: [id], onDelete: SetNull)
+  executions      RecurringPaymentExecution[]
+  
+  @@index([userId])
+  @@index([fromAccountId])
+  @@index([status])
+  @@index([nextExecutionDate])
+  @@map("recurring_payments")
+}
+
+// Recurring Payment Execution History
+model RecurringPaymentExecution {
+  id                  String   @id @default(cuid())
+  recurringPaymentId  String
+  executionDate       DateTime @default(now())
+  amount              Decimal  @db.Decimal(15, 2)
+  status              String   @default("PENDING") // "SUCCESS" | "FAILED" | "PENDING"
+  transactionId       String?  // Reference to created transaction
+  errorMessage        String?
+  retryCount          Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  recurringPayment    RecurringPayment @relation(fields: [recurringPaymentId], references: [id], onDelete: Cascade)
+  
+  @@index([recurringPaymentId])
+  @@index([status])
+  @@map("recurring_payment_executions")
+}
+
+model FixedDeposit {
+  id              String   @id @default(cuid())
+  userId          String
+  accountId       String
+  depositNumber   String   @unique
+  principalAmount Decimal  @db.Decimal(15, 2)
+  interestRate    Decimal  @default(12.00) @db.Decimal(5, 2)
+  termMonths      Int
+  maturityAmount  Decimal  @db.Decimal(15, 2)
+  maturityDate    DateTime
+  status          String   @default("ACTIVE") // ACTIVE, WITHDRAWAL_PENDING, WITHDRAWN, MATURED, CANCELLED
+  autoRenew       Boolean  @default(false)
+  withdrawnAmount Decimal? @db.Decimal(15, 2)
+  withdrawnAt     DateTime?
+  processedBy     String?
+  // Withdrawal request fields
+  withdrawalRequestedAt DateTime?
+  withdrawalReason      String?
+  withdrawalStatus      String?  // PENDING, APPROVED, REJECTED
+  withdrawalProcessedAt DateTime?
+  withdrawalRejectionReason String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account         Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  processor       User?    @relation("ProcessedFixedDeposits", fields: [processedBy], references: [id])
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([status])
+  @@map("fixed_deposits")
+}

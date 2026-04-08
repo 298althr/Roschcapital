@@ -1,0 +1,52 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "magic-ui": {
+      "command": "npx",
+      "args": ["-y", "@magicuidesign/mcp"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "jenkins": {
+      "command": "uvx",
+      "args": [
+        "mcp-jenkins",
+        "--jenkins-url",
+        "${JENKINS_URL}",
+        "--jenkins-username",
+        "${JENKINS_USERNAME}",
+        "--jenkins-password",
+        "${JENKINS_PASSWORD}"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "c:\\Users\\sayv\\Documents\\Gatwick Bank\\bank_deploy"
+      ]
+    },
+    "agentic-framework": {
+      "command": "npx",
+      "args": ["-y", "mcp-agentic-framework"]
+    },
+    "code-context": {
+      "command": "npx",
+      "args": ["-y", "code-context-provider-mcp"]
+    },
+    "cognee": {
+      "command": "npx",
+      "args": ["-y", "cognee-mcp"]
+    }
+  }
+}

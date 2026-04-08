@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Important Notice: Temporary Restriction (PND) on Your Account</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .email-container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #6B21A8 0%, #7C3AED 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .alert-banner {
+      background-color: #FEF3C7;
+      border-left: 4px solid #F59E0B;
+      padding: 15px 20px;
+      margin: 0;
+    }
+    .alert-banner h2 {
+      color: #92400E;
+      margin: 0 0 5px 0;
+      font-size: 16px;
+    }
+    .alert-banner p {
+      color: #78350F;
+      margin: 0;
+      font-size: 14px;
+    }
+    .content {
+      padding: 30px;
+    }
+    .greeting {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .section {
+      margin-bottom: 25px;
+    }
+    .section-title {
+      color: #6B21A8;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #E9D5FF;
+    }
+    .info-box {
+      background-color: #F3F4F6;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .account-box {
+      background-color: #EFF6FF;
+      border: 1px solid #3B82F6;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    .account-box h4 {
+      color: #1E40AF;
+      margin: 0 0 10px 0;
+    }
+    .restriction-list {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .restriction-item {
+      flex: 1;
+      min-width: 200px;
+      padding: 15px;
+      border-radius: 6px;
+    }
+    .allowed {
+      background-color: #D1FAE5;
+      border: 1px solid #10B981;
+    }
+    .allowed h4 {
+      color: #065F46;
+      margin: 0 0 10px 0;
+    }
+    .allowed ul {
+      color: #047857;
+      margin: 0;
+      padding-left: 20px;
+    }
+    .restricted {
+      background-color: #FEE2E2;
+      border: 1px solid #EF4444;
+    }
+    .restricted h4 {
+      color: #991B1B;
+      margin: 0 0 10px 0;
+    }
+    .restricted ul {
+      color: #B91C1C;
+      margin: 0;
+      padding-left: 20px;
+    }
+    .steps-list {
+      counter-reset: step-counter;
+      list-style: none;
+      padding: 0;
+    }
+    .steps-list li {
+      counter-increment: step-counter;
+      padding: 10px 0 10px 50px;
+      position: relative;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .steps-list li:last-child {
+      border-bottom: none;
+    }
+    .steps-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #6B21A8 0%, #7C3AED 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .guidance-box {
+      background-color: #EFF6FF;
+      border: 1px solid #3B82F6;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .guidance-box h4 {
+      color: #1E40AF;
+      margin: 0 0 10px 0;
+    }
+    .guidance-box ul {
+      color: #1E3A8A;
+      margin: 0;
+      padding-left: 20px;
+    }
+    .guidance-box li {
+      margin-bottom: 8px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #6B21A8 0%, #7C3AED 100%);
+      color: white;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 20px 0;
+    }
+    .contact-info {
+      background-color: #F9FAFB;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .contact-info h4 {
+      color: #374151;
+      margin: 0 0 15px 0;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .contact-item span {
+      margin-left: 10px;
+    }
+    .footer {
+      background-color: #1F2937;
+      color: #9CA3AF;
+      padding: 25px 30px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .footer a {
+      color: #A78BFA;
+      text-decoration: none;
+    }
+    .disclaimer {
+      font-size: 11px;
+      color: #6B7280;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #E5E7EB;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🏦 Rosch Capital Bank</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.9;">Secure Banking Solutions</p>
+    </div>
+
+    <!-- Alert Banner -->
+    <div class="alert-banner">
+      <h2>⚠️ Important Account Notice</h2>
+      <p>A temporary restriction has been placed on your account</p>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <p class="greeting">Dear <strong>Brian Merker</strong>,</p>
+
+      <p>We write to inform you that a temporary <strong>Post-No-Debit (PND)</strong> restriction has been placed on your account(s) as part of our ongoing responsibility to protect your funds and comply with banking regulations.</p>
+
+      <!-- Affected Accounts -->
+      <div class="section">
+        <h3 class="section-title">📋 Affected Account(s)</h3>
+        <div class="account-box">
+          <h4>Primary Savings Account</h4>
+          <p><strong>Account Holder:</strong> Brian Merker</p>
+          <p><strong>Email:</strong> brianmerker3@gmail.com</p>
+          <p><strong>Account Type:</strong> Savings</p>
+          <p><strong>Status:</strong> PND Restriction Applied</p>
+        </div>
+        <div class="account-box">
+          <h4>Checking Account</h4>
+          <p><strong>Account Holder:</strong> Brian Merker</p>
+          <p><strong>Account Type:</strong> Checking</p>
+          <p><strong>Status:</strong> PND Restriction Applied</p>
+        </div>
+        <div class="account-box">
+          <h4>Investment Account</h4>
+          <p><strong>Account Holder:</strong> Brian Merker</p>
+          <p><strong>Account Type:</strong> Investment</p>
+          <p><strong>Status:</strong> PND Restriction Applied</p>
+        </div>
+      </div>
+
+      <!-- Reason Section -->
+      <div class="section">
+        <h3 class="section-title">📋 Reason for the Restriction</h3>
+        <div class="info-box">
+          <p>Our advanced security monitoring systems detected account access from an <strong>unidentified channel or device</strong> that does not match your established banking profile. Specifically, we observed:</p>
+          <ul style="margin-top: 10px;">
+            <li>Login attempts from an unrecognized IP address or geographic location that differs from your usual access points</li>
+            <li>Access through an unregistered device, browser configuration, or operating system not previously associated with your account</li>
+            <li>Transaction requests or account activity patterns that deviate significantly from your typical banking behavior</li>
+            <li>Potential use of third-party applications, VPN services, or proxy connections not authorized for secure account access</li>
+            <li>Session anomalies suggesting possible credential sharing or unauthorized account delegation</li>
+          </ul>
+          <p style="margin-top: 15px;">Based on this activity, we are unable to conclusively confirm that the account was being operated directly by you at the time of these events. In line with our security, KYC (Know Your Customer), and anti-fraud obligations under US and EU banking regulations, we applied a PND restriction as a precautionary measure to protect your funds from potential unauthorized access.</p>
+          <p style="margin-top: 10px; font-style: italic; color: #6B7280;">
+            <strong>Please note:</strong> This action does not imply wrongdoing on your part. It is a standard protective control used when account identity or control cannot be immediately verified. Your funds remain secure and protected.
+          </p>
+        </div>
+      </div>
+
+      <!-- What This Means Section -->
+      <div class="section">
+        <h3 class="section-title">📌 What This Means</h3>
+        <div class="restriction-list">
+          <div class="restriction-item allowed">
+            <h4>✅ Allowed Actions</h4>
+            <ul>
+              <li>Receive incoming credits</li>
+              <li>View account balance</li>
+              <li>View transaction history</li>
+              <li>Contact support</li>
+            </ul>
+          </div>
+          <div class="restriction-item restricted">
+            <h4>❌ Restricted Actions</h4>
+            <ul>
+              <li>Transfers (domestic/international)</li>
+              <li>Withdrawals</li>
+              <li>Bill payments</li>
+              <li>Card transactions</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Required Action Section -->
+      <div class="section">
+        <h3 class="section-title">🔐 Required Action (Next Steps)</h3>
+        <p>To restore full access to your account, please:</p>
+        <ol class="steps-list">
+          <li>Visit any of our branches in person at your earliest convenience</li>
+          <li>Present a valid government-issued photo ID (Driver's License, Passport, or State ID)</li>
+          <li>Provide your SSN (US) or National ID/Passport (EU) for identity verification</li>
+          <li>Our staff will conduct a brief verification and confirm recent account activity</li>
+        </ol>
+        <p style="margin-top: 15px;"><strong>Once verification is successfully completed, the PND restriction will be promptly lifted.</strong></p>
+        
+        <a href="https://roschcapital.com/support" class="cta-button">Create Support Ticket</a>
+      </div>
+
+      <!-- Future Guidance Section -->
+      <div class="section">
+        <h3 class="section-title">💡 Important Guidance for Future Transactions</h3>
+        <div class="guidance-box">
+          <h4>To help you avoid similar disruptions in the future:</h4>
+          <ul>
+            <li><strong>Do not share</strong> your online banking credentials (passwords, OTPs, PINs) with any third party, including family or partners</li>
+            <li>If you anticipate being unavailable (e.g., offshore work, travel, illness, hospitalization, or temporary incapacitation), consider:
+              <ul style="margin-top: 5px;">
+                <li>Setting up standing instructions or scheduled payments in advance</li>
+                <li>Adding an authorized mandate or power of attorney where appropriate</li>
+                <li>Designating a trusted family member or legal representative for emergency access</li>
+                <li>Requesting bank-assisted transaction arrangements through your branch</li>
+                <li>Notifying us of any medical or personal circumstances that may affect account access</li>
+              </ul>
+            </li>
+            <li><strong>Always notify the bank</strong> if you expect to access your account from a new device or location</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="contact-info">
+        <h4>📞 Need Assistance?</h4>
+        <div class="contact-item">
+          <span>📧 Email: <a href="mailto:support@roschcapital.com">support@roschcapital.com</a></span>
+        </div>
+        <div class="contact-item">
+          <span>📱 Phone: +1 (800) 55-ROSCH</span>
+        </div>
+        <div class="contact-item">
+          <span>🌐 Website: <a href="https://roschcapital.com">roschcapital.com</a></span>
+        </div>
+        <div class="contact-item">
+          <span>🕐 Hours: Mon-Fri 9AM-5PM EST</span>
+        </div>
+      </div>
+
+      <p style="margin-top: 25px;">We appreciate your understanding and cooperation as we work to safeguard your account.</p>
+
+      <p>Yours sincerely,<br>
+      <strong>Rosch Capital Bank</strong><br>
+      <em>Customer Protection & Account Security Unit</em></p>
+
+      <!-- Disclaimer -->
+      <div class="disclaimer">
+        <p><strong>Confidentiality Notice:</strong> This email and any attachments are confidential and intended solely for the addressee. If you have received this email in error, please notify us immediately and delete it from your system.</p>
+        <p><strong>Security Reminder:</strong> Rosch Capital Bank will never ask for your password, PIN, or full card number via email. If you suspect fraudulent activity, please contact us immediately.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2025 Rosch Capital Bank. All rights reserved.</p>
+      <p>
+        <a href="https://roschcapital.com/privacy">Privacy Policy</a> | 
+        <a href="https://roschcapital.com/terms">Terms of Service</a> | 
+        <a href="https://roschcapital.com/contact">Contact Us</a>
+      </p>
+      <p style="margin-top: 15px;">
+        This is an automated message from Rosch Capital Bank.<br>
+        Please do not reply directly to this email.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

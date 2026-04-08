@@ -1,0 +1,73 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+package-lock.json
+
+# Env files
+.env
+.env.local
+.env.*.local
+.env.mcp
+local-dev-passwords.txt
+
+# Build output
+dist/
+build/
+
+# Vite cache
+.vite/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Prisma dev DB
+dev.db
+
+# Misc
+coverage/
+.cache/
+
+# Ignore large legacy assets if accidentally copied
+zenithpoints/
+public_html/
+
+# Temporary admin files
+mybanker/
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Backups
+backend/backups/*
+!backend/backups/.gitkeep
+
+# Mock data (for local development only)
+frontend/src/lib/mockData.js
+
+# Old landing page (replaced with LandingPageV2)
+frontend/src/pages/LandingPage.jsx
+
+# Markdown documentation files (all docs, including README)
+*.md
+
+# Achievement and status files
+ACHIEVEMENT_LOG.json
+
+# Prompts and development files
+prompts/
+new
+Debugging.txt
+
+# Test files
+test-app.js
+backend/test-*.js

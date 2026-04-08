@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 48" fill="none">
+  <!-- Icon background -->
+  <rect x="0" y="4" width="40" height="40" rx="10" fill="url(#iconGradient)"/>
+  
+  <!-- Building icon -->
+  <g transform="translate(8, 12)">
+    <path d="M12 2L4 7v2h16V7L12 2z" fill="white" opacity="0.9"/>
+    <rect x="6" y="11" width="2" height="8" fill="white" opacity="0.85"/>
+    <rect x="11" y="11" width="2" height="8" fill="white" opacity="0.85"/>
+    <rect x="16" y="11" width="2" height="8" fill="white" opacity="0.85"/>
+    <rect x="4" y="19" width="16" height="2" rx="0.5" fill="white" opacity="0.9"/>
+  </g>
+  
+  <!-- Text: Rosch Capital Bank -->
+  <text x="52" y="32" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="white">
+    <tspan fill="#a78bfa">Rosch</tspan><tspan fill="white"> Capital Bank</tspan>
+  </text>
+  
+  <defs>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#581c87"/>
+    </linearGradient>
+  </defs>
+</svg>

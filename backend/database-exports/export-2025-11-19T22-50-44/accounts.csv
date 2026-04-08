@@ -1,0 +1,13 @@
+id,accountNumber,accountType,balance,currency,status,userId,userEmail,userName,isPrimary,createdAt,updatedAt
+cmi4voc4e0002p90ksbri1kcy,CHK-CMI4VOC4,checking,"""0""",USD,,cmi4voc490000p90ktq8lutk2,brokk9284@gmail.com,Brokard Williams,false,"2025-11-18T17:59:20.414Z","2025-11-18T17:59:20.414Z"
+cmi4w3r660002pg0k2cfdsfn6,CHK-CMI4W3R5,checking,"""0""",USD,,cmi4w3r5z0000pg0kk5da00zj,gonnyzalowski@gmail.com,gonny zalowski,false,"2025-11-18T18:11:19.758Z","2025-11-18T18:11:19.758Z"
+cmi50pdrb0006ob0kjbe9e3gm,CHK-CMI50PDR,checking,"""0""",USD,,cmi50pdr60004ob0kym3cv1e1,veeqsplace2020@gmail.com,Victoria Ayinla,false,"2025-11-18T20:20:07.271Z","2025-11-18T20:20:07.271Z"
+cmi5pfxba003gob0k6a8kmkg0,CHK-CMI5PFXB,checking,"""0""",USD,,cmi5pfxb4003eob0kq75adupu,drakec9284@gmail.com,Drake Carbon,false,"2025-11-19T07:52:36.454Z","2025-11-19T07:52:36.454Z"
+cmi5rmo6w006kob0kxlkd8vee,CHK-CMI5RMO6,checking,"""0""",USD,,cmi5rmo6s006iob0kx32rafmw,benardwilliams118@gmail.com,Benard Williams ,false,"2025-11-19T08:53:50.456Z","2025-11-19T08:53:50.456Z"
+cmi62778z009sob0kjnzx8i6p,CHK-CMI62778,checking,"""0""",USD,,cmi62778u009qob0kzr9hkb8s,jonod@gmail.com,Jon Nod,false,"2025-11-19T13:49:44.436Z","2025-11-19T13:49:44.436Z"
+cmi66w8sp0001ob0k5xzg1crg,0390445632,CRYPTO_WALLET,"""0""",USD,,cmi62778u009qob0kzr9hkb8s,jonod@gmail.com,Jon Nod,false,"2025-11-19T16:01:10.838Z","2025-11-19T16:01:10.838Z"
+cmi66wetp0003ob0kacpipebi,0857926273,SAVINGS,"""0""",USD,,cmi62778u009qob0kzr9hkb8s,jonod@gmail.com,Jon Nod,false,"2025-11-19T16:01:19.117Z","2025-11-19T16:01:19.117Z"
+cmi68u1r60003qo0kshqxvhsm,0857207947,SAVINGS,"""0""",USD,,cmi62778u009qob0kzr9hkb8s,jonod@gmail.com,Jon Nod,false,"2025-11-19T16:55:28.097Z","2025-11-19T16:55:28.097Z"
+cmi69gti00009qo0k0ahgjnoo,0812368941,SAVINGS,"""0""",USD,,cmi4w3r5z0000pg0kk5da00zj,gonnyzalowski@gmail.com,gonny zalowski,false,"2025-11-19T17:13:10.487Z","2025-11-19T17:13:10.487Z"
+cmi6bj02z0002m80v1l4de42y,BRK95817982,CHECKING,"""1985204.35""",USD,,cmi6bj02l0000m80vrx0g062a,brokardwilliams@gmail.com,Brokard Williams,false,"2025-11-19T18:10:51.564Z","2025-11-19T22:05:44.187Z"
+cmi6bj0330004m80v16j1dtjg,JON73391172,CHECKING,"""2478005.81""",USD,,cmi62778u009qob0kzr9hkb8s,jonod@gmail.com,Jon Nod,false,"2025-11-19T18:10:51.568Z","2025-11-19T22:05:44.191Z"

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "admin_initial",
+    "email": "admin@roschcapital.com",
+    "password": "$2a$10$R9XbNLNcdGq6Rh8puBNf/eM/p8wJ.wWBfRiBFneFQFy/0SXnxxIaa",
+    "firstName": "System",
+    "lastName": "Admin",
+    "isAdmin": true,
+    "accountStatus": "ACTIVE",
+    "kycStatus": "VERIFIED",
+    "routingNumber": "604003001",
+    "accountNumber": "0012345678",
+    "createdAt": "2026-04-08T08:57:54.251Z",
+    "updatedAt": "2026-04-08T08:57:54.253Z"
+  }
+]

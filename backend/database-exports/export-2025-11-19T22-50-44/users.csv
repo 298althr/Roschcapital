@@ -1,0 +1,8 @@
+id,email,firstName,lastName,phone,dateOfBirth,accountStatus,kycStatus,isAdmin,loginPreference,createdAt,updatedAt
+cmi4voc490000p90ktq8lutk2,brokk9284@gmail.com,Brokard,Williams,,,LIMITED,NOT_SUBMITTED,false,question,"2025-11-18T17:59:20.409Z","2025-11-18T17:59:20.409Z"
+cmi4w3r5z0000pg0kk5da00zj,gonnyzalowski@gmail.com,gonny,zalowski,,,LIMITED,NOT_SUBMITTED,true,question,"2025-11-18T18:11:19.752Z","2025-11-18T18:11:19.752Z"
+cmi50pdr60004ob0kym3cv1e1,veeqsplace2020@gmail.com,Victoria,Ayinla,,,LIMITED,NOT_SUBMITTED,false,question,"2025-11-18T20:20:07.266Z","2025-11-18T20:22:00.607Z"
+cmi5pfxb4003eob0kq75adupu,drakec9284@gmail.com,Drake,Carbon,,,LIMITED,NOT_SUBMITTED,false,question,"2025-11-19T07:52:36.448Z","2025-11-19T07:52:36.448Z"
+cmi5rmo6s006iob0kx32rafmw,benardwilliams118@gmail.com,Benard,Williams ,,,LIMITED,NOT_SUBMITTED,false,question,"2025-11-19T08:53:50.452Z","2025-11-19T08:53:50.452Z"
+cmi62778u009qob0kzr9hkb8s,jonod@gmail.com,Jon,Nod,,,ACTIVE,NOT_SUBMITTED,true,question,"2025-11-19T13:49:44.430Z","2025-11-19T22:42:31.244Z"
+cmi6bj02l0000m80vrx0g062a,brokardwilliams@gmail.com,Brokard,Williams,+15550101,"1985-03-15T00:00:00.000Z",ACTIVE,VERIFIED,false,question,"2025-11-19T18:10:51.550Z","2025-11-19T22:42:31.618Z"

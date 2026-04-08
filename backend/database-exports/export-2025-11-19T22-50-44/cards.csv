@@ -1,0 +1,5 @@
+id,cardNumber,cardType,cardholderName,expiryDate,status,accountId,accountNumber,userEmail,creditLimit,currentBalance,createdAt
+cmi4wtwus0005tf0k381ydtv0,41719810962003,debit,,,,cmi4voc4e0002p90ksbri1kcy,CHK-CMI4VOC4,brokk9284@gmail.com,,,"2025-11-18T18:31:40.180Z"
+cmi50uhp3003dob0k4ytei89c,44791050757311,debit,,,,cmi50pdrb0006ob0kjbe9e3gm,CHK-CMI50PDR,veeqsplace2020@gmail.com,,,"2025-11-18T20:24:05.655Z"
+cmi66x1tq0005ob0kz7bifh32,44399002806122,debit,,,,cmi66w8sp0001ob0k5xzg1crg,0390445632,jonod@gmail.com,,,"2025-11-19T16:01:48.926Z"
+cmi675b7g0007ob0kasqvwgzo,45013912544205,debit,,,,cmi66w8sp0001ob0k5xzg1crg,0390445632,jonod@gmail.com,,,"2025-11-19T16:08:14.332Z"

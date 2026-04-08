@@ -1,0 +1,40 @@
+# Development files
+node_modules/
+*.log
+npm-debug.log*
+.DS_Store
+
+# Environment files (use Railway env vars instead)
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+coverage/
+*.test.js
+*.spec.js
+
+# Documentation (optional - remove if you want docs deployed)
+*.md
+!README.md
+
+# Git files
+.git/
+.gitignore
+.github/
+
+# Frontend source (only need dist)
+frontend/src/
+frontend/public/
+frontend/node_modules/
+
+# Backend development
+backend/node_modules/
+backend/.env
+backend/.env.*

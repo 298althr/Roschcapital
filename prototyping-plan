@@ -1,0 +1,47 @@
+Here is the implementation plan, the resource requirements, and the logic fix roadmap.
+
+1. The Strategy: The "Shim" Architecture
+To keep the application working without PostgreSQL or Redis, we will create two internal "shims" that mimic their APIs.
+
+Prisma JSON Shim: A service that intercepts prisma.user.findUnique() style calls and routes them to local JSON file operations.
+Redis In-Memory Shim: A simple Map-based service that handles token blacklisting and sessions, persisting to a JSON file occasionally so that restarts don't log everyone out.
+2. Phase 1: Infrastructure & Data Setup
+Objective: Transition from external dependencies to local internal services.
+
+Initialize JSON Storage: Create a backend/data/ directory and seed all 29 tables (models) as JSON arrays.
+The Prisma Proxy: Build a jsonDb.js client. This will be the most complex part, as it needs to support filtering (where), inclusion (include), and basic ordering to keep the service files untouched.
+Environment Cleanup: Update backend/.env to reference local data paths. We will keep the PORT and JWT_SECRET but discard DATABASE_URL and REDIS_URL.
+Railway Config Update: Modify railway.json and railway.toml to remove the Postgres and Redis plugins, reducing your costs and complexity.
+3. Phase 2: The "Logic Fix" Roadmap
+Objective: Resolve the critical business logic issues identified in the analysis.
+
+The Balance Authority:
+Fix: Create a balanceSync utility. Every time a transaction is created or a status changes, this utility will recalculate the "Triple Balance" (balance, availableBalance, pendingBalance).
+Loan Fix: Ensure Loan Approvals credit both balance and availableBalance.
+Status Normalization:
+Fix: Update all services (paymentService, transferService, loanService) to use a global STATUS constant. No more mixed completed vs COMPLETED.
+Collision Prevention:
+Fix: Update the routingNumber generator to check the JSON database for existence before assigning it to a new user. Use a 12-digit random string for account numbers instead of a sequential one.
+Transaction Simulation:
+Since JSON files don't support ACID transactions, we will implement a "Write-Ahead" lock. When a file is being updated, other writes will queue for a few milliseconds to prevent data corruption.
+4. Phase 3: Frontend "App-Like" Experience
+Objective: Implement premium loading states across the dashboard.
+
+Global Loading Skeleton: Create a SkeletonCard and SkeletonList component in frontend/src/components.
+Fetching States: Update all 31 dashboard pages to use a unified isLoading pattern.
+Transitions: Add CSS transitions (fade-in/blur-up) when data finishes loading to make the UI feel "fluid" rather than "jumpy."
+5. What you need to provide
+To execute this, I will need access to any Seed Data you want to keep. Specifically:
+
+Resource: Are there specific "Real-ish" users or dummy accounts currently in your Postgres DB that you want me to export into the initial JSON files?
+Context: Do you want the JSON database to be Committed to GitHub (publicly visible data) or kept in a .gitignore folder for local/ephemeral use only?
+Context: For the "Two Services" on Railway, do you want them kept separate (separate Railway services) or should I prepare the backend to Serve the Frontend (reducing it to One service eventually)? The plan currently assumes Two Separate Services.
+Execution Plan (Internal Workflow)
+Step	Action	Tool
+1	Create backend/data/ and all 27 .json templates.	write_to_file
+2	Implement the JsonClient Proxy.	write_to_file
+3	Replace src/config/prisma.js with the Proxy.	replace_file_content
+4	Replace src/config/redis.js with In-Memory Stub.	replace_file_content
+5	Apply "Triple Balance" logic fixes to services.	multi_replace_file_content
+6	Implement Loading Skeletons in Frontend.	write_to_file
+7	Update Dashboard pages with loading logic.	multi_replace_file_content
