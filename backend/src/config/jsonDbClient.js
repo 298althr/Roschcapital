@@ -46,11 +46,9 @@ class JsonModel {
   }
 
   async findUnique({ where, include, select }) {
-    const data = this._read();
-    const item = data.find(i => {
-      return Object.entries(where).every(([key, value]) => i[key] === value);
-    });
-    return this._processResult(item, include, select);
+    let data = this._read();
+    if (where) data = this._filter(data, where);
+    return this._processResult(data[0], include, select);
   }
 
   async findFirst({ where, include, select, orderBy }) {
@@ -212,6 +210,14 @@ class JsonModel {
           });
         }
         if (typeof value === 'object' && value !== null) {
+          if (value.equals !== undefined) {
+            const target = typeof i[key] === 'string' ? i[key] : String(i[key] || '');
+            const query = typeof value.equals === 'string' ? value.equals : String(value.equals);
+            if (value.mode === 'insensitive') {
+              return target.toLowerCase() === query.toLowerCase();
+            }
+            return target === query;
+          }
           if (value.contains) {
             const target = i[key] || '';
             const query = value.contains;
@@ -368,11 +374,9 @@ class PartitionedJsonModel extends JsonModel {
   }
 
   async findUnique(params) {
-    const data = this._readAll();
-    const item = data.find(i => {
-      return Object.entries(params.where).every(([key, value]) => i[key] === value);
-    });
-    return this._processResult(item, params.include, params.select);
+    let data = this._readAll();
+    if (params.where) data = this._filter(data, params.where);
+    return this._processResult(data[0], params.include, params.select);
   }
 
   async findFirst(params) {
