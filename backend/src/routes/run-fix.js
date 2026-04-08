@@ -1,9 +1,9 @@
 // Temporary route to execute the account fix - DELETE AFTER USE
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prisma.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
+
 
 // GET /api/v1/run-fix (no auth required for quick execution)
 router.get('/', async (req, res) => {

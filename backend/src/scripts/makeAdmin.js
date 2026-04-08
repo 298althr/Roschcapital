@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prisma.js';
 
-const prisma = new PrismaClient();
+
 
 async function makeAdmin() {
   const email = 'gonnyzalowski@gmail.com';

@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+import prisma from '../config/prisma.js';
+
 
 /**
  * Generate a unique 12-digit account number starting with 00
@@ -27,4 +27,4 @@ async function generateAccountNumber() {
   return accountNumber;
 }
 
-module.exports = { generateAccountNumber };
+export { generateAccountNumber };

@@ -1,5 +1,5 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prisma.js';
 import { verifyAuth } from '../middleware/auth.js';
 import { uploadKYCDocuments } from '../middleware/kycUpload.js';
 import { uploadLimiter } from '../middleware/rateLimiter.js';
@@ -7,7 +7,7 @@ import path from 'path';
 import fs from 'fs';
 
 const router = express.Router();
-const prisma = new PrismaClient();
+
 
 // Get user's KYC status and documents
 // GET /api/v1/kyc/status

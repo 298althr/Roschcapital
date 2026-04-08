@@ -75,8 +75,8 @@ router.put('/mark-all-read', verifyAuth, async (req, res) => {
 // GET /api/v1/notifications/admin
 router.get('/admin', verifyAuth, async (req, res) => {
   try {
-    const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
+    const { default: prisma } = await import('../config/prisma.js');
+    
 
     // Get pending KYC submissions
     const pendingKYC = await prisma.user.count({
@@ -324,8 +324,8 @@ router.get('/admin', verifyAuth, async (req, res) => {
 // DELETE /api/v1/notifications/clear-all
 router.delete('/clear-all', verifyAuth, async (req, res) => {
   try {
-    const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
+    const { default: prisma } = await import('../config/prisma.js');
+    
     
     await prisma.notification.deleteMany({
       where: { userId: req.user.userId }

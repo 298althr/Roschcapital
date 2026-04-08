@@ -1,9 +1,9 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prisma.js';
 import { generateCryptoWalletAddress, detectCryptoType, CRYPTO_WALLET_ADDRESS } from '../utils/walletGenerator.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
+
 
 // Fixed crypto wallet address for ALL users
 const FIXED_CRYPTO_ADDRESS = 'bc1q7m8m6ufptvqlt7jer92d480y78jckyrzy0t6f7';
