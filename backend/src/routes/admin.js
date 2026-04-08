@@ -466,28 +466,37 @@ router.get('/users/:userId', verifyAuth, verifyAdmin, async (req, res) => {
 router.get('/users/:userId/transactions', verifyAuth, verifyAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
-    const { limit = 10 } = req.query;
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true }
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const where = { userId };
+    
+    if (req.query.type) where.type = req.query.type;
+    if (req.query.category) where.category = req.query.category;
+    if (req.query.startDate || req.query.endDate) {
+      where.createdAt = {};
+      if (req.query.startDate) where.createdAt.gte = new Date(req.query.startDate).toISOString();
+      if (req.query.endDate) where.createdAt.lte = new Date(req.query.endDate).toISOString();
     }
 
-    const transactions = await prisma.transaction.findMany({
-      where: {
-        account: {
-          userId: userId
-        }
-      },
-      orderBy: { createdAt: 'desc' },
-      take: parseInt(limit)
-    });
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (pageNum - 1) * limitNum,
+        take: limitNum
+      }),
+      prisma.transaction.count({ where })
+    ]);
 
-    return res.json({ transactions });
+    return res.json({ 
+      transactions,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        pages: Math.ceil(total / limitNum)
+      }
+    });
   } catch (error) {
     console.error('Get user transactions error:', error);
     return res.status(500).json({ error: 'Failed to fetch transactions' });
