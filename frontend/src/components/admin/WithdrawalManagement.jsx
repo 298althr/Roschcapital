@@ -287,7 +287,7 @@ const WithdrawalManagement = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-lg font-bold text-white">
-                        ${parseFloat(withdrawal.amount).toLocaleString()}
+                        ${parseFloat(withdrawal.amount || 0).toLocaleString()}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -300,7 +300,7 @@ const WithdrawalManagement = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-slate-300">
-                        {new Date(withdrawal.createdAt).toLocaleDateString()}
+                        {withdrawal.createdAt ? new Date(withdrawal.createdAt).toLocaleDateString() : 'N/A'}
                       </span>
                     </td>
                     <td className="px-6 py-4">

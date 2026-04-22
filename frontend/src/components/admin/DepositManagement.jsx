@@ -280,7 +280,7 @@ export const DepositManagement = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-white font-semibold">${parseFloat(deposit.amount).toFixed(2)}</span>
+                    <span className="text-white font-semibold">${parseFloat(deposit.amount || 0).toFixed(2)}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-slate-300 text-sm">{deposit.method}</span>
@@ -297,7 +297,7 @@ export const DepositManagement = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-slate-400 text-sm">{new Date(deposit.createdAt).toLocaleDateString()}</span>
+                    <span className="text-slate-400 text-sm">{deposit.createdAt ? new Date(deposit.createdAt).toLocaleDateString() : 'N/A'}</span>
                   </td>
                   <td className="px-6 py-4">
                     {deposit.status === 'PENDING' && (

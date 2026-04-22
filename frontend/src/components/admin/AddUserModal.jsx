@@ -103,7 +103,12 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validate()) return;
+    if (!validate()) {
+      // Scroll to top of modal to show validation errors
+      const modalElement = document.getElementById('add-user-modal-content');
+      if (modalElement) modalElement.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -171,7 +176,10 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-800 border border-slate-700 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div 
+        id="add-user-modal-content"
+        className="bg-slate-800 border border-slate-700 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+      >
         {/* Header */}
         <div className="sticky top-0 bg-slate-800 border-b border-slate-700 p-6 flex items-center justify-between z-10">
           <div>

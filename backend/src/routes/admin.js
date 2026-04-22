@@ -317,6 +317,9 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
     const [users, total] = await Promise.all([
       prisma.user.findMany({
         where,
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
         select: {
           id: true,
           email: true,
@@ -328,7 +331,10 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
           accountStatus: true,
           kycStatus: true,
           totalSentAmount: true,
-          createdAt: true
+          createdAt: true,
+          accounts: true,
+          debitCards: true,
+          creditCards: true
         },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
@@ -338,10 +344,8 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
     ]);
 
     // Format users with balance from primary account and include all accounts natively mapped
-    const formattedUsers = await Promise.all(users.map(async user => {
-      const userAccounts = await prisma.account.findMany({ where: { userId: user.id } });
-      const userDebitCards = await prisma.debitCard.findMany({ where: { userId: user.id } });
-      const userCreditCards = await prisma.creditCard.findMany({ where: { userId: user.id } });
+    const formattedUsers = users.map(user => {
+      const userAccounts = user.accounts || [];
       
       // Sort accounts with primary first
       const sortedAccounts = [...userAccounts].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
@@ -351,22 +355,24 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
       return {
         ...user,
         accounts: sortedAccounts,
+        accountsCount: userAccounts.length,
+        cardsCount: (user.debitCards?.length || 0) + (user.creditCards?.length || 0),
+        primaryAccount,
         balance: totalBalance,
         primaryBalance: primaryAccount ? normalizeMoneyValue(primaryAccount.balance) : 0,
-        accountType: primaryAccount?.accountType || 'N/A',
-        accountsCount: userAccounts.length,
-        cardsCount: userDebitCards.length + userCreditCards.length,
-        debitCards: undefined,
-        creditCards: undefined
+        accountType: primaryAccount?.accountType || 'N/A'
       };
-    }));
+    });
 
-    return res.json({
+    return res.json({ 
+      success: true, 
       users: formattedUsers,
-      total,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages: Math.ceil(total / limit)
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        pages: Math.ceil(total / limit)
+      }
     });
   } catch (error) {
     console.error('Get users error:', error);
@@ -1442,20 +1448,24 @@ router.delete('/transactions/:transactionId', verifyAuth, verifyAdmin, async (re
 router.get('/users-with-transactions', verifyAuth, verifyAdmin, async (req, res) => {
   try {
     const users = await prisma.user.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      include: {
+        accounts: true,
+        _count: {
+          select: { transactions: true }
+        }
+      }
     });
-    const usersWithCounts = await Promise.all(users.map(async user => {
-      const userAccounts = await prisma.account.findMany({ where: { userId: user.id } });
-      const totalTransactions = await prisma.transaction.count({ where: { userId: user.id } });
-      const totalBalance = userAccounts.reduce((sum, acc) => sum + normalizeMoneyValue(acc.balance), 0);
+
+    const usersWithCounts = users.map(user => {
+      const totalBalance = user.accounts.reduce((sum, acc) => sum + normalizeMoneyValue(acc.balance), 0);
       
       return {
         ...user,
-        accounts: userAccounts,
-        totalTransactions,
+        totalTransactions: user._count.transactions,
         totalBalance
       };
-    }));
+    });
 
     return res.json({ users: usersWithCounts });
   } catch (error) {

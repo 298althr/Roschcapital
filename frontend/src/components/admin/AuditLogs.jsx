@@ -174,7 +174,7 @@ export const AuditLogs = () => {
                         <span className="font-medium">IP:</span> {log.ipAddress || 'N/A'}
                       </div>
                       <div>
-                        <span className="font-medium">Time:</span> {new Date(log.createdAt).toLocaleString()}
+                        <span className="font-medium">Time:</span> {log.createdAt ? new Date(log.createdAt).toLocaleString() : 'N/A'}
                       </div>
                     </div>
                     {log.metadata && (

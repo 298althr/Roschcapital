@@ -598,10 +598,10 @@ export const TransactionManagement = () => {
                         </td>
                         <td className="px-4 py-3">
                           <div className="text-white text-sm">
-                            {new Date(tx.createdAt).toLocaleDateString()}
+                            {tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : 'N/A'}
                           </div>
                           <div className="text-slate-400 text-xs">
-                            {new Date(tx.createdAt).toLocaleTimeString()}
+                            {tx.createdAt ? new Date(tx.createdAt).toLocaleTimeString() : ''}
                           </div>
                         </td>
                         <td className="px-4 py-3">

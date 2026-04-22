@@ -236,7 +236,7 @@ export const SupportTicketsPage = () => {
                 </div>
                 <div className="flex items-center gap-1 text-xs text-slate-500">
                   <Clock className="w-3 h-3" />
-                  {new Date(ticket.createdAt).toLocaleString()}
+                  {ticket.createdAt ? new Date(ticket.createdAt).toLocaleString() : 'N/A'}
                 </div>
               </div>
             ))
@@ -327,8 +327,8 @@ export const SupportTicketsPage = () => {
                         <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
                         <div className="flex items-center justify-between mt-2">
                           <p className="text-xs opacity-70">
-                            {new Date(msg.createdAt).toLocaleString()}
-                            {msg.updatedAt && new Date(msg.updatedAt).getTime() > new Date(msg.createdAt).getTime() && (
+                            {msg.createdAt ? new Date(msg.createdAt).toLocaleString() : 'N/A'}
+                            {msg.updatedAt && new Date(msg.updatedAt).getTime() > (msg.createdAt ? new Date(msg.createdAt).getTime() : 0) && (
                               <span className="ml-1">(edited)</span>
                             )}
                           </p>

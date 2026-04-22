@@ -178,7 +178,7 @@ export const ChequeManagement = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-slate-400 text-sm">{new Date(cheque.issuedDate).toLocaleDateString()}</span>
+                    <span className="text-slate-400 text-sm">{cheque.issuedDate ? new Date(cheque.issuedDate).toLocaleDateString() : 'N/A'}</span>
                   </td>
                   <td className="px-6 py-4">
                     {cheque.status === 'PENDING' && (

@@ -272,10 +272,12 @@ export const KYCReview = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-slate-400">
-                      {new Date(user.kycSubmittedAt).toLocaleDateString()}
+                      {user.kycSubmittedAt ? new Date(user.kycSubmittedAt).toLocaleDateString() : 'Pending'}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {Math.floor((new Date() - new Date(user.kycSubmittedAt)) / (1000 * 60 * 60 * 24))} days ago
+                      {user.kycSubmittedAt 
+                        ? `${Math.floor((new Date() - new Date(user.kycSubmittedAt)) / (1000 * 60 * 60 * 24))} days ago`
+                        : 'N/A'}
                     </div>
                   </td>
                   <td className="px-6 py-4">

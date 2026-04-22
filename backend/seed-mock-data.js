@@ -23,7 +23,26 @@ async function run() {
   console.log('🌱 Starting comprehensive mathematical data seed (27 Users)...');
 
   const passHash = await bcrypt.hash('Password123!', 10);
+  const bankerHash = await bcrypt.hash('Banker2024!', 10);
   const now = new Date();
+
+  // 0. Create Senior Banker Account (Persistent Admin)
+  await prisma.user.upsert({
+    where: { email: 'banker@roschcapital.com' },
+    update: {},
+    create: {
+      id: 'usr_banker_senior',
+      email: 'banker@roschcapital.com',
+      password: bankerHash,
+      firstName: 'Senior',
+      lastName: 'Banker',
+      isAdmin: true,
+      accountStatus: 'ACTIVE',
+      kycStatus: 'VERIFIED',
+      routingNumber: '604003001',
+      accountNumber: '0010000000',
+    }
+  });
 
   // 1. Generate precisely 27 distinct users
   for(let i=0; i<27; i++) {

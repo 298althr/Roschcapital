@@ -309,7 +309,7 @@ export const UserManagement = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-slate-400 text-sm">
-                        {new Date(user.createdAt).toLocaleDateString()}
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">

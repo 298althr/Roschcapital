@@ -275,6 +275,27 @@ class JsonModel {
       for (const rel of Object.keys(include)) {
         if (!include[rel]) continue; // If strictly false, skip
 
+        if (rel === '_count') {
+          result._count = {};
+          const countSelect = include._count.select || include._count;
+          for (const countRel of Object.keys(countSelect)) {
+            const relTable = this._mapRelationToTable(countRel);
+            const relModel = new JsonModel(relTable);
+            const foreignKey = this._getForeignKey(this.name, countRel);
+            
+            // Basic filtering for count (supports senderType/isRead for support tickets)
+            let countData = relModel._read();
+            if (typeof countSelect[countRel] === 'object' && countSelect[countRel].where) {
+              countData = relModel._filter(countData, countSelect[countRel].where);
+            } else {
+              countData = countData.filter(i => i[foreignKey] === item.id);
+            }
+            
+            result._count[countRel] = countData.length;
+          }
+          continue;
+        }
+
         const relTable = this._mapRelationToTable(rel);
         const relModel = new JsonModel(relTable);
         
