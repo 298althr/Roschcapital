@@ -121,6 +121,8 @@ router.post('/register', registerLimiter, async (req, res) => {
 router.post('/login', authLimiter, checkAccountLockout, async (req, res) => {
   const validation = validateRequest(loginSchema, req.body);
   if (!validation.valid) {
+    console.log('❌ Login validation failed:', JSON.stringify(validation.errors, null, 2));
+    console.log('📦 Received body:', JSON.stringify(req.body, null, 2));
     return res.status(400).json({ errors: validation.errors });
   }
 

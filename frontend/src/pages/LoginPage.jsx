@@ -33,6 +33,17 @@ export const LoginPage = () => {
       }, 100);
     }
   }, [searchParams]);
+  
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (authUser && !inactivityLogout) {
+      if (authUser.isAdmin) {
+        navigate('/mybanker');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [authUser, navigate, inactivityLogout]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -44,10 +55,12 @@ export const LoginPage = () => {
     setIsLoading(true);
 
     try {
+      console.log('🚀 Sending login request for:', formData.email);
       const response = await apiClient.post('/auth/login', {
         email: formData.email,
         password: formData.password
       });
+      console.log('✅ Login response received:', response);
 
       if (response.requiresVerification) {
         // Step 1 successful, move to step 2
@@ -72,9 +85,9 @@ export const LoginPage = () => {
         
         // Redirect based on user role
         if (response.user.isAdmin) {
-          navigate('/mybanker');
+          window.location.href = '/mybanker';
         } else {
-          navigate('/dashboard');
+          window.location.href = '/dashboard';
         }
       }
     } catch (err) {
