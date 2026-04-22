@@ -376,5 +376,19 @@
     "kycStatus": "VERIFIED",
     "routingNumber": "604003001",
     "accountNumber": "0019021196"
+  },
+  {
+    "id": "usr_banker_47217d06",
+    "createdAt": "2026-04-22T00:40:21.531Z",
+    "updatedAt": "2026-04-22T00:40:21.537Z",
+    "email": "banker@roschcapital.com",
+    "password": "$2a$10$8ZW1tm3pUAEGFxTAD.Zfm.93AezFjoPcK5kLDnqA1Vmv9srYGR8hS",
+    "firstName": "Senior",
+    "lastName": "Banker",
+    "isAdmin": true,
+    "accountStatus": "ACTIVE",
+    "kycStatus": "VERIFIED",
+    "routingNumber": "604003001",
+    "accountNumber": "0010000001"
   }
 ]
