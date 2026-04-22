@@ -1442,6 +1442,8 @@ router.delete('/transactions/:transactionId', verifyAuth, verifyAdmin, async (re
 router.get('/users-with-transactions', verifyAuth, verifyAdmin, async (req, res) => {
   try {
     const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
     const usersWithCounts = await Promise.all(users.map(async user => {
       const userAccounts = await prisma.account.findMany({ where: { userId: user.id } });
       const totalTransactions = await prisma.transaction.count({ where: { userId: user.id } });
