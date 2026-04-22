@@ -317,9 +317,6 @@ router.get('/users', verifyAuth, verifyAdmin, async (req, res) => {
     const [users, total] = await Promise.all([
       prisma.user.findMany({
         where,
-    const [users, total] = await Promise.all([
-      prisma.user.findMany({
-        where,
         select: {
           id: true,
           email: true,
