@@ -28,6 +28,7 @@ import recurringPaymentsRouter from './recurringPayments.js';
 import fixedDepositsRouter from './fixedDeposits.js';
 import { verifyAuth } from '../middleware/auth.js';
 import { getAccountSummary } from '../services/accountService.js';
+import { triggerRecurringPayments } from '../services/recurringPaymentService.js';
 
 const router = express.Router();
 
@@ -66,6 +67,9 @@ router.use('/run-fix', runFixRouter); // Temporary route to execute account fix
  */
 router.get('/dashboard', verifyAuth, async (req, res) => {
 	try {
+		// Trigger recurring payments check (throttled background process)
+		triggerRecurringPayments();
+
 		const summary = await getAccountSummary(req.user.userId);
 		res.json({
 			success: true,

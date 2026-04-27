@@ -7,6 +7,7 @@ import { upload } from '../middleware/upload.js';
 import bcrypt from 'bcryptjs';
 import fs from 'fs';
 import path from 'path';
+import { triggerRecurringPayments } from '../services/recurringPaymentService.js';
 
 const router = express.Router();
 
@@ -101,6 +102,9 @@ const promoteDefaultSpendingAccount = async (userId) => {
 // GET /api/v1/mybanker/stats
 router.get('/stats', verifyAuth, verifyAdmin, async (req, res) => {
   try {
+    // Trigger recurring payments check
+    triggerRecurringPayments();
+
     const [totalUsers, pendingKYC, activeAccounts, recentAudits] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { kycStatus: 'PENDING' } }),

@@ -117,11 +117,6 @@ const startServer = async () => {
     await prisma.$connect();
     console.log('✅ Database connected');
     
-    // Schedule recurring payments processing (every 10 minutes)
-    setInterval(processDueRecurringPayments, 10 * 60 * 1000);
-    // Initial run after startup
-    setTimeout(processDueRecurringPayments, 5000);
-    
     const server = app.listen(config.port, () => {
       console.log(`✅ API listening on port ${config.port}`);
       console.log(`📦 Environment: ${config.nodeEnv}`);

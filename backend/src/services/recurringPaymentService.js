@@ -20,6 +20,22 @@ const calculateNextDate = (frequency, currentNextDate) => {
   return date;
 };
 
+let lastExecutionTime = 0;
+const EXECUTION_COOLDOWN = 60 * 60 * 1000; // Only process once per hour to save resources
+
+export const triggerRecurringPayments = () => {
+  const now = Date.now();
+  if (now - lastExecutionTime > EXECUTION_COOLDOWN) {
+    lastExecutionTime = now;
+    // Process in background, don't await to keep requests fast
+    processDueRecurringPayments().catch(err => {
+      console.error('Background recurring payment processing failed:', err);
+    });
+    return true;
+  }
+  return false;
+};
+
 export const processDueRecurringPayments = async () => {
   console.log('⏱️ Checking for due recurring payments...');
   const now = new Date();
@@ -158,5 +174,6 @@ const processSinglePayment = async (payment) => {
 };
 
 export default {
-  processDueRecurringPayments
+  processDueRecurringPayments,
+  triggerRecurringPayments
 };
