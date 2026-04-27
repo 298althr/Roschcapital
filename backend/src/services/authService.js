@@ -25,6 +25,9 @@ export const registerUser = async (email, password, firstName, lastName, additio
   // Extract currency from additionalData, default to USD
   const { currency = 'USD', ...restData } = additionalData;
   
+  // Assign to first available branch
+  const firstBranch = await prisma.branch.findFirst();
+  
   const user = await prisma.user.create({
     data: {
       email,
@@ -32,6 +35,7 @@ export const registerUser = async (email, password, firstName, lastName, additio
       firstName,
       lastName,
       routingNumber,
+      branchId: firstBranch?.id,
       // Make the very first registered user an admin after a fresh reset
       isAdmin: userCount === 0,
       ...restData

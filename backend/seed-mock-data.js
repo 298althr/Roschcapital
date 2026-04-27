@@ -26,6 +26,41 @@ async function run() {
   const bankerHash = await bcrypt.hash('Banker2024!', 10);
   const now = new Date();
 
+  // 00. Create Currencies
+  console.log('🪙 Seeding currencies...');
+  const currencies = [
+    { code: 'USD', name: 'US Dollar', symbol: '$', type: 'FIAT', exchangeRate: 1.0, isBase: true },
+    { code: 'EUR', name: 'Euro', symbol: '€', type: 'FIAT', exchangeRate: 1.08, isBase: false },
+    { code: 'GBP', name: 'British Pound', symbol: '£', type: 'FIAT', exchangeRate: 1.26, isBase: false },
+    { code: 'NGN', name: 'Nigerian Naira', symbol: '₦', type: 'FIAT', exchangeRate: 0.00065, isBase: false },
+    { code: 'BTC', name: 'Bitcoin', symbol: '₿', type: 'CRYPTO', exchangeRate: 65000.0, isBase: false },
+    { code: 'ETH', name: 'Ethereum', symbol: 'Ξ', type: 'CRYPTO', exchangeRate: 3500.0, isBase: false }
+  ];
+
+  for (const curr of currencies) {
+    await prisma.currency.upsert({
+      where: { code: curr.code },
+      update: curr,
+      create: curr
+    });
+  }
+
+  // 000. Create Branches
+  console.log('🏦 Seeding branches...');
+  const branches = [
+    { name: 'Main Branch', code: 'MAIN', address: '123 Wall St', city: 'New York', country: 'United States', routingNumber: '604003001' },
+    { name: 'London City', code: 'LDN', address: '10 Canary Wharf', city: 'London', country: 'United Kingdom', routingNumber: '604003002' },
+    { name: 'Lagos Victoria', code: 'LAG', address: '15 Victoria Island', city: 'Lagos', country: 'Nigeria', routingNumber: '604003003' }
+  ];
+
+  for (const branch of branches) {
+    await prisma.branch.upsert({
+      where: { code: branch.code },
+      update: branch,
+      create: branch
+    });
+  }
+
   // 0. Create Senior Banker Account (Persistent Admin)
   await prisma.user.upsert({
     where: { email: 'banker@roschcapital.com' },

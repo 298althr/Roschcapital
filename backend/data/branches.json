@@ -1,0 +1,35 @@
+[
+  {
+    "id": "cfda93001ff5f2e3b",
+    "createdAt": "2026-04-27T12:59:32.357Z",
+    "updatedAt": "2026-04-27T12:59:32.357Z",
+    "name": "Main Branch",
+    "code": "MAIN",
+    "address": "123 Wall St",
+    "city": "New York",
+    "country": "United States",
+    "routingNumber": "604003001"
+  },
+  {
+    "id": "ca7e3624265324f26",
+    "createdAt": "2026-04-27T12:59:32.358Z",
+    "updatedAt": "2026-04-27T12:59:32.358Z",
+    "name": "London City",
+    "code": "LDN",
+    "address": "10 Canary Wharf",
+    "city": "London",
+    "country": "United Kingdom",
+    "routingNumber": "604003002"
+  },
+  {
+    "id": "c2fe6ba7e536d0388",
+    "createdAt": "2026-04-27T12:59:32.359Z",
+    "updatedAt": "2026-04-27T12:59:32.359Z",
+    "name": "Lagos Victoria",
+    "code": "LAG",
+    "address": "15 Victoria Island",
+    "city": "Lagos",
+    "country": "Nigeria",
+    "routingNumber": "604003003"
+  }
+]

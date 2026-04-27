@@ -322,6 +322,20 @@ transfersRouter.post('/internal', async (req, res) => {
     if (fromAccount.id === toAccount.id) {
       return res.status(400).json({ error: 'Cannot transfer to the same account' });
     }
+
+    // Get currency info
+    const fromCurrency = await prisma.currency.findUnique({ where: { code: fromAccount.currency || 'USD' } });
+    const toCurrency = await prisma.currency.findUnique({ where: { code: toAccount.currency || 'USD' } });
+
+    const fromSymbol = fromCurrency?.symbol || '$';
+    const toSymbol = toCurrency?.symbol || '$';
+
+    // Calculate converted amount if currencies differ
+    let recipientAmount = parseFloat(amount);
+    if (fromAccount.currency !== toAccount.currency && fromCurrency && toCurrency) {
+      // from -> USD -> to
+      recipientAmount = (parseFloat(amount) * parseFloat(fromCurrency.exchangeRate)) / parseFloat(toCurrency.exchangeRate);
+    }
     
     // Create transaction reference
     const reference = `TRF-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
@@ -334,10 +348,10 @@ transfersRouter.post('/internal', async (req, res) => {
         data: { balance: { decrement: parseFloat(amount) } }
       });
       
-      // Add to recipient
+      // Add to recipient (converted amount)
       await tx.account.update({
         where: { id: toAccount.id },
-        data: { balance: { increment: parseFloat(amount) } }
+        data: { balance: { increment: recipientAmount } }
       });
       
       // Create debit transaction for sender
@@ -360,7 +374,7 @@ transfersRouter.post('/internal', async (req, res) => {
         data: {
           accountId: toAccount.id,
           type: 'CREDIT',
-          amount: parseFloat(amount),
+          amount: recipientAmount,
           description: description || `Transfer from ${fromAccount.accountNumber}`,
           reference,
           status: 'COMPLETED',
@@ -376,10 +390,11 @@ transfersRouter.post('/internal', async (req, res) => {
           userId: req.user.userId,
           type: 'transaction',
           title: 'Transfer Sent',
-          message: `You sent $${amount} to ${toAccount.user.firstName} ${toAccount.user.lastName}`,
+          message: `You sent ${fromSymbol}${parseFloat(amount).toLocaleString()} to ${toAccount.user.firstName} ${toAccount.user.lastName}`,
           metadata: {
             transactionId: debitTx.id,
             amount: parseFloat(amount),
+            currency: fromAccount.currency,
             reference
           }
         }
@@ -390,10 +405,11 @@ transfersRouter.post('/internal', async (req, res) => {
           userId: toAccount.userId,
           type: 'transaction',
           title: 'Money Received',
-          message: `You received $${amount} from account ${fromAccount.accountNumber}`,
+          message: `You received ${toSymbol}${recipientAmount.toLocaleString()} from account ${fromAccount.accountNumber}`,
           metadata: {
             transactionId: creditTx.id,
-            amount: parseFloat(amount),
+            amount: recipientAmount,
+            currency: toAccount.currency,
             reference
           }
         }
@@ -402,7 +418,8 @@ transfersRouter.post('/internal', async (req, res) => {
       return {
         debitTransaction: debitTx,
         creditTransaction: creditTx,
-        reference
+        reference,
+        recipientAmount
       };
     });
     
@@ -413,9 +430,11 @@ transfersRouter.post('/internal', async (req, res) => {
       message: 'Transfer completed successfully',
       reference: result.reference,
       amount: parseFloat(amount),
+      recipientAmount: result.recipientAmount,
       recipient: {
         name: `${toAccount.user.firstName} ${toAccount.user.lastName}`,
-        accountNumber: toAccountNumber
+        accountNumber: toAccountNumber,
+        currency: toAccount.currency
       }
     });
   } catch (error) {

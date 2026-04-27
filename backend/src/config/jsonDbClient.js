@@ -190,20 +190,39 @@ class JsonModel {
     return deleted[0];
   }
 
-  async deleteMany({ where }) {
+  async deleteMany({ where } = {}) {
     const table = this._read();
     const initialLength = table.length;
     const newTable = table.filter(i => {
+      if (!where) return false;
       return !Object.entries(where).every(([key, value]) => i[key] === value);
     });
     this._write(newTable);
     return { count: initialLength - newTable.length };
   }
 
-  async count(params = {}) {
-    let data = this._read();
-    if (params.where) data = this._filter(data, params.where);
-    return data.length;
+  async upsert({ where, update, create }) {
+    const table = this._read();
+    const index = table.findIndex(i => {
+      return Object.entries(where).every(([key, value]) => i[key] === value);
+    });
+
+    if (index !== -1) {
+      const updated = { ...table[index], ...update, updatedAt: new Date().toISOString() };
+      table[index] = updated;
+      this._write(table);
+      return updated;
+    } else {
+      const newItem = {
+        id: create.id || `c${crypto.randomBytes(8).toString('hex')}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        ...create
+      };
+      table.push(newItem);
+      this._write(table);
+      return newItem;
+    }
   }
 
   _filter(data, where) {
@@ -555,6 +574,7 @@ class JsonDb {
     this.supportMessage = new JsonModel('support_messages');
     this.withdrawal = new JsonModel('withdrawals');
     this.currency = new JsonModel('currencies');
+    this.branch = new JsonModel('branches');
     this.recurringPayment = new JsonModel('recurring_payments');
     this.recurringPaymentExecution = new JsonModel('recurring_payment_executions');
     this.fixedDeposit = new JsonModel('fixed_deposits');

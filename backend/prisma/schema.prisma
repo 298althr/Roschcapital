@@ -58,9 +58,11 @@ model User {
   totalSentAmount  Decimal  @default(0) @db.Decimal(10, 2) // Track cumulative transfers for LIMITED users
   loginPreference  String   @default("question") // question | code - User's preferred 2FA method
   autoDebitEnabled Boolean  @default(true) // Auto-cover negative balances from other accounts
+  branchId         String?  // Associated bank branch
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  branch            Branch?   @relation(fields: [branchId], references: [id])
   accounts          Account[]
   sessions          Session[]
   securityQuestions SecurityQuestion[]
@@ -85,6 +87,23 @@ model User {
   @@map("users")
 }
 
+// Bank Branches
+model Branch {
+  id            String   @id @default(cuid())
+  name          String   @unique // "Main Branch", "London City", etc.
+  code          String   @unique // Branch code
+  address       String
+  city          String
+  country       String
+  routingNumber String   @unique
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  users         User[]
+
+  @@map("branches")
+}
 // User bank accounts
 model Account {
   id          String   @id @default(cuid())

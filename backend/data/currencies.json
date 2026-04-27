@@ -1,0 +1,68 @@
+[
+  {
+    "id": "cf6d973ea62104f55",
+    "createdAt": "2026-04-27T12:58:24.021Z",
+    "updatedAt": "2026-04-27T12:59:32.341Z",
+    "code": "USD",
+    "name": "US Dollar",
+    "symbol": "$",
+    "type": "FIAT",
+    "exchangeRate": 1,
+    "isBase": true
+  },
+  {
+    "id": "c5dbaf02be442d7a1",
+    "createdAt": "2026-04-27T12:58:24.034Z",
+    "updatedAt": "2026-04-27T12:59:32.350Z",
+    "code": "EUR",
+    "name": "Euro",
+    "symbol": "€",
+    "type": "FIAT",
+    "exchangeRate": 1.08,
+    "isBase": false
+  },
+  {
+    "id": "c0b30875e3cadc7c7",
+    "createdAt": "2026-04-27T12:58:24.036Z",
+    "updatedAt": "2026-04-27T12:59:32.352Z",
+    "code": "GBP",
+    "name": "British Pound",
+    "symbol": "£",
+    "type": "FIAT",
+    "exchangeRate": 1.26,
+    "isBase": false
+  },
+  {
+    "id": "cad5b3a889de40b5b",
+    "createdAt": "2026-04-27T12:58:24.038Z",
+    "updatedAt": "2026-04-27T12:59:32.353Z",
+    "code": "NGN",
+    "name": "Nigerian Naira",
+    "symbol": "₦",
+    "type": "FIAT",
+    "exchangeRate": 0.00065,
+    "isBase": false
+  },
+  {
+    "id": "c0a326fe7055719cb",
+    "createdAt": "2026-04-27T12:58:24.040Z",
+    "updatedAt": "2026-04-27T12:59:32.354Z",
+    "code": "BTC",
+    "name": "Bitcoin",
+    "symbol": "₿",
+    "type": "CRYPTO",
+    "exchangeRate": 65000,
+    "isBase": false
+  },
+  {
+    "id": "caa3b833ce0fd5161",
+    "createdAt": "2026-04-27T12:58:24.042Z",
+    "updatedAt": "2026-04-27T12:59:32.355Z",
+    "code": "ETH",
+    "name": "Ethereum",
+    "symbol": "Ξ",
+    "type": "CRYPTO",
+    "exchangeRate": 3500,
+    "isBase": false
+  }
+]
