@@ -276,7 +276,9 @@ export const UserManagement = () => {
                                       )}
                                     </div>
                                     <div className="text-white font-mono text-sm">{acc.accountNumber}</div>
-                                    <div className="text-green-400 text-sm font-semibold">${parseFloat(acc.balance || 0).toLocaleString()}</div>
+                                    <div className="text-green-400 text-sm font-semibold">
+                                      {acc.currency === 'USD' ? '$' : acc.currency === 'EUR' ? '€' : acc.currency === 'GBP' ? '£' : acc.currency === 'NGN' ? '₦' : acc.currency} {parseFloat(acc.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}
+                                    </div>
                                   </div>
                                 ))}
                               </div>
@@ -298,7 +300,10 @@ export const UserManagement = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-white font-semibold">${parseFloat(user.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                      <div className="text-white font-semibold flex items-center gap-1">
+                        <span className="text-xs text-slate-500 font-normal">Total:</span>
+                        ${parseFloat(user.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                      </div>
                       <div className="text-slate-400 text-xs">{user.accountsCount || 0} acct{user.accountsCount !== 1 ? 's' : ''} • {user.cardsCount || 0} card{user.cardsCount !== 1 ? 's' : ''}</div>
                     </td>
                     <td className="px-6 py-4">

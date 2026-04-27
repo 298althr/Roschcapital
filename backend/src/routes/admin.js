@@ -160,9 +160,7 @@ const createUserHandler = async (req, res) => {
       zipCode = '',
       country = '',
       password,
-      accountType = 'SAVINGS',
-      initialBalance = 0,
-      currency = 'USD',
+      accounts = [], // Multi-account array
       branchId,
       setAsActive = true,
       securityQuestions = [],
@@ -178,13 +176,13 @@ const createUserHandler = async (req, res) => {
       return res.status(400).json({ error: 'User with this email already exists' });
     }
 
-    // Generate unique account number (00 + 10 random digits)
-    let accountNumber;
+    // Generate unique user identity account number
+    let userIdNumber;
     let isUnique = false;
     while (!isUnique) {
       const randomDigits = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
-      accountNumber = `00${randomDigits}`;
-      const existing = await prisma.user.findUnique({ where: { accountNumber } });
+      userIdNumber = `00${randomDigits}`;
+      const existing = await prisma.user.findUnique({ where: { accountNumber: userIdNumber } });
       if (!existing) isUnique = true;
     }
 
@@ -205,27 +203,53 @@ const createUserHandler = async (req, res) => {
         state,
         zipCode,
         country,
-        accountNumber,
-        branchId, // Assign to specific branch
+        accountNumber: userIdNumber,
+        branchId,
         isAdmin: !!isAdmin,
         accountStatus: setAsActive ? 'ACTIVE' : 'LIMITED',
         kycStatus: setAsActive ? 'VERIFIED' : 'NOT_SUBMITTED'
       }
     });
 
-    // Create primary account
-    const account = await prisma.account.create({
-      data: {
-        userId: user.id,
-        accountType: accountType.toUpperCase(),
-        accountNumber, // Use same account number for primary account
-        balance: parseFloat(initialBalance) || 0,
-        availableBalance: parseFloat(initialBalance) || 0,
-        isPrimary: true,
-        isActive: true,
-        currency: currency.toUpperCase()
+    // Create accounts and their initial transactions
+    const createdAccounts = [];
+    for (let i = 0; i < accounts.length; i++) {
+      const acc = accounts[i];
+      const bal = parseFloat(acc.balance) || 0;
+      
+      // Generate unique account number for this specific account
+      const typePrefix = acc.type === 'SAVINGS' ? 'SAV' : acc.type === 'FIXED' ? 'FD' : 'CHK';
+      const accNum = `${typePrefix}${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`;
+
+      const newAccount = await prisma.account.create({
+        data: {
+          userId: user.id,
+          accountType: acc.type.toUpperCase(),
+          accountNumber: accNum,
+          balance: bal,
+          availableBalance: bal,
+          isPrimary: i === 0, // First account in list is primary
+          isActive: true,
+          currency: (acc.currency || 'USD').toUpperCase()
+        }
+      });
+
+      createdAccounts.push(newAccount);
+
+      if (bal > 0) {
+        await prisma.transaction.create({
+          data: {
+            userId: user.id,
+            accountId: newAccount.id,
+            amount: bal,
+            type: 'CREDIT',
+            description: `Initial ${acc.type.toLowerCase()} deposit by admin`,
+            status: 'COMPLETED',
+            reference: `INIT-${Date.now()}-${i}`
+          }
+        });
       }
-    });
+    }
 
     // Create security questions if provided
     if (securityQuestions && Array.isArray(securityQuestions)) {
@@ -281,9 +305,9 @@ const createUserHandler = async (req, res) => {
         ipAddress: req.ip || '127.0.0.1',
         metadata: {
           newUserId: user.id,
-          accountNumber,
-          accountType,
-          initialBalance
+          userIdNumber,
+          accountsCount: createdAccounts.length,
+          totalInitialBalance: createdAccounts.reduce((sum, a) => sum + a.balance, 0)
         }
       }
     });
@@ -446,11 +470,17 @@ router.get('/users/:userId', verifyAuth, verifyAdmin, async (req, res) => {
     console.log('User found:', user.email, 'Accounts:', user.accounts.length);
 
     // Format response
+    const userAccounts = user.accounts || [];
+    const totalBalance = userAccounts.reduce((sum, acc) => sum + normalizeMoneyValue(acc.balance), 0);
+    const primaryAccount = userAccounts.find(acc => acc.isPrimary) || userAccounts[0];
+
     const formattedUser = {
       ...user,
-      balance: user.accounts[0]?.balance || 0,
-      accountType: user.accounts[0]?.accountType || 'N/A',
-      accountNumber: user.accounts[0]?.accountNumber || 'N/A',
+      balance: totalBalance,
+      primaryBalance: primaryAccount ? normalizeMoneyValue(primaryAccount.balance) : 0,
+      accountType: primaryAccount?.accountType || 'N/A',
+      accountNumber: primaryAccount?.accountNumber || 'N/A',
+      accountsCount: userAccounts.length,
       password: undefined, // Never send password
       hashedPassword: undefined
     };

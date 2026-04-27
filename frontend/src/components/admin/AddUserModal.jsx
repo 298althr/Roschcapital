@@ -34,9 +34,11 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
     // Account Settings
     password: '',
     confirmPassword: '',
-    accountType: 'CHECKING',
-    initialBalance: '0',
-    currency: 'USD',
+    accounts: {
+      CHECKING: { enabled: true, balance: '0', currency: 'USD' },
+      SAVINGS: { enabled: false, balance: '0', currency: 'USD' },
+      FIXED: { enabled: false, balance: '0', currency: 'USD' }
+    },
     branchId: '',
     setAsActive: false,
     
@@ -83,6 +85,19 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+  };
+
+  const handleAccountChange = (type, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      accounts: {
+        ...prev.accounts,
+        [type]: {
+          ...prev.accounts[type],
+          [field]: value
+        }
+      }
+    }));
   };
 
   const validate = () => {
@@ -149,11 +164,15 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
         zipCode: formData.zipCode,
         country: formData.country,
         password: formData.password,
-        accountType: formData.accountType,
-        initialBalance: parseFloat(formData.initialBalance),
-        currency: formData.currency,
         branchId: formData.branchId,
         setAsActive: formData.setAsActive,
+        accounts: Object.entries(formData.accounts)
+          .filter(([_, data]) => data.enabled)
+          .map(([type, data]) => ({
+            type,
+            balance: parseFloat(data.balance) || 0,
+            currency: data.currency
+          })),
         securityQuestions: [
           { question: formData.question1, answer: formData.answer1 },
           { question: formData.question2, answer: formData.answer2 },
@@ -388,62 +407,59 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
           </div>
 
-          {/* Account Settings */}
+          {/* Multi-Account Setup */}
           <div>
             <h4 className="text-white font-semibold mb-4 flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-indigo-400" />
-              Account Settings
+              Account Setup
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Account Type *
-                </label>
-                <select
-                  name="accountType"
-                  value={formData.accountType}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="CHECKING">Checking</option>
-                  <option value="SAVINGS">Savings</option>
-                  <option value="BUSINESS">Business</option>
-                </select>
-              </div>
+            <div className="space-y-4">
+              {Object.entries(formData.accounts).map(([type, data]) => (
+                <div key={type} className={`p-4 rounded-xl border transition-all ${data.enabled ? 'bg-slate-700/50 border-indigo-500/50' : 'bg-slate-900/50 border-slate-700'}`}>
+                  <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <label className="flex items-center gap-3 min-w-[140px] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={data.enabled}
+                        onChange={(e) => handleAccountChange(type, 'enabled', e.target.checked)}
+                        className="w-5 h-5 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
+                      />
+                      <span className="text-white font-medium">{type}</span>
+                    </label>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Initial Balance
-                </label>
-                <input
-                  type="number"
-                  name="initialBalance"
-                  value={formData.initialBalance}
-                  onChange={handleChange}
-                  min="0"
-                  step="0.01"
-                  className={`w-full px-4 py-2 bg-slate-900 border ${errors.initialBalance ? 'border-red-500' : 'border-slate-700'} rounded-lg text-white focus:ring-2 focus:ring-indigo-500`}
-                />
-                {errors.initialBalance && <p className="text-red-400 text-xs mt-1">{errors.initialBalance}</p>}
-              </div>
+                    {data.enabled && (
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-left-2 duration-200">
+                        <div>
+                          <label className="block text-xs text-slate-400 mb-1">Initial Balance</label>
+                          <input
+                            type="number"
+                            value={data.balance}
+                            onChange={(e) => handleAccountChange(type, 'balance', e.target.value)}
+                            placeholder="0.00"
+                            className="w-full px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-indigo-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-slate-400 mb-1">Currency</label>
+                          <select
+                            value={data.currency}
+                            onChange={(e) => handleAccountChange(type, 'currency', e.target.value)}
+                            className="w-full px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-indigo-500"
+                          >
+                            {currencies.map(curr => (
+                              <option key={curr.id} value={curr.code}>{curr.code}</option>
+                            ))}
+                            {currencies.length === 0 && <option value="USD">USD</option>}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Currency *
-                </label>
-                <select
-                  name="currency"
-                  value={formData.currency}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500"
-                >
-                  {currencies.map(curr => (
-                    <option key={curr.id} value={curr.code}>{curr.code} - {curr.name}</option>
-                  ))}
-                  {currencies.length === 0 && <option value="USD">USD - US Dollar</option>}
-                </select>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Bank Branch *
@@ -455,14 +471,14 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
                   className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500"
                 >
                   {branches.map(branch => (
-                    <option key={branch.id} value={branch.id}>{branch.name} ({branch.location})</option>
+                    <option key={branch.id} value={branch.id}>{branch.name} ({branch.city})</option>
                   ))}
                   {branches.length === 0 && <option value="">No Branches Available</option>}
                 </select>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="flex items-end">
+                <label className="flex items-center gap-2 cursor-pointer mb-2">
                   <input
                     type="checkbox"
                     name="setAsActive"
@@ -471,7 +487,7 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-2 focus:ring-indigo-500"
                   />
                   <span className="text-slate-300 text-sm">
-                    Set as Active (KYC Verified) - Account will be fully activated
+                    Pre-verify KYC & Activate Account
                   </span>
                 </label>
               </div>
