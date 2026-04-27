@@ -290,19 +290,32 @@ class JsonModel {
     });
 
     // Handle relations (basic simulation)
-    if (include) {
-      for (const rel of Object.keys(include)) {
-        if (!include[rel]) continue; // If strictly false, skip
+    // If select is provided, it might contain relation requests (like accounts: true)
+    // Prisma doesn't allow both include and select, so we merge them for processing
+    const effectiveInclude = { ...(include || {}) };
+    if (select) {
+      for (const key of Object.keys(select)) {
+        if (typeof select[key] === 'object' || select[key] === true) {
+          // If it's a relation (accounts, loans, etc.), add it to effectiveInclude
+          if (['accounts', 'loans', 'debitCards', 'creditCards', 'transactions', 'securityQuestions', 'backupCodes', 'beneficiaries', 'user', 'account', 'notifications', 'kycDocuments', 'fixedDeposits'].includes(key)) {
+             effectiveInclude[key] = select[key];
+          }
+        }
+      }
+    }
+
+    if (Object.keys(effectiveInclude).length > 0) {
+      for (const rel of Object.keys(effectiveInclude)) {
+        if (!effectiveInclude[rel]) continue; 
 
         if (rel === '_count') {
           result._count = {};
-          const countSelect = include._count.select || include._count;
+          const countSelect = effectiveInclude._count.select || effectiveInclude._count;
           for (const countRel of Object.keys(countSelect)) {
             const relTable = this._mapRelationToTable(countRel);
             const relModel = new JsonModel(relTable);
             const foreignKey = this._getForeignKey(this.name, countRel);
             
-            // Basic filtering for count (supports senderType/isRead for support tickets)
             let countData = relModel._read();
             if (typeof countSelect[countRel] === 'object' && countSelect[countRel].where) {
               countData = relModel._filter(countData, countSelect[countRel].where);
@@ -318,13 +331,11 @@ class JsonModel {
         const relTable = this._mapRelationToTable(rel);
         const relModel = new JsonModel(relTable);
         
-        // Backward relations (e.g. Loan -> User, Transaction -> Account)
         if (rel === 'user' || rel === 'account') {
             const parentIdKey = rel === 'user' ? 'userId' : 'accountId';
             const parentItem = relModel._read().find(i => i.id === item[parentIdKey]);
-            result[rel] = parentItem ? this._processResult(parentItem, typeof include[rel] === 'object' ? include[rel].include : undefined, typeof include[rel] === 'object' ? include[rel].select : undefined) : null;
+            result[rel] = parentItem ? this._processResult(parentItem, typeof effectiveInclude[rel] === 'object' ? effectiveInclude[rel].include : undefined, typeof effectiveInclude[rel] === 'object' ? effectiveInclude[rel].select : undefined) : null;
         } 
-        // Forward relations (e.g. User -> Accounts, User -> Loans)
         else {
             const foreignKey = this._getForeignKey(this.name, rel);
             if (foreignKey) {

@@ -129,6 +129,20 @@ router.get('/stats', verifyAuth, verifyAdmin, async (req, res) => {
   }
 });
 
+// Get all branches
+// GET /api/v1/mybanker/branches
+router.get('/branches', verifyAuth, verifyAdmin, async (req, res) => {
+  try {
+    const branches = await prisma.branch.findMany({
+      orderBy: { name: 'asc' }
+    });
+    return res.json({ success: true, branches });
+  } catch (error) {
+    console.error('Get branches error:', error);
+    return res.status(500).json({ error: 'Failed to fetch branches' });
+  }
+});
+
 // Create new user (Admin only)
 // POST /api/v1/mybanker/users
 // or /api/v1/mybanker/users/create
@@ -148,6 +162,8 @@ const createUserHandler = async (req, res) => {
       password,
       accountType = 'SAVINGS',
       initialBalance = 0,
+      currency = 'USD',
+      branchId,
       setAsActive = true,
       securityQuestions = [],
       isAdmin = false
@@ -190,6 +206,7 @@ const createUserHandler = async (req, res) => {
         zipCode,
         country,
         accountNumber,
+        branchId, // Assign to specific branch
         isAdmin: !!isAdmin,
         accountStatus: setAsActive ? 'ACTIVE' : 'LIMITED',
         kycStatus: setAsActive ? 'VERIFIED' : 'NOT_SUBMITTED'
@@ -206,7 +223,7 @@ const createUserHandler = async (req, res) => {
         availableBalance: parseFloat(initialBalance) || 0,
         isPrimary: true,
         isActive: true,
-        currency: 'USD'
+        currency: currency.toUpperCase()
       }
     });
 

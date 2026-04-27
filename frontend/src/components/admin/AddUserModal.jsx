@@ -14,6 +14,8 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
   const [showBackupCodes, setShowBackupCodes] = useState(false);
   const [createdUser, setCreatedUser] = useState(null);
   const [backupCodes, setBackupCodes] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [formData, setFormData] = useState({
     // Personal Information
     firstName: '',
@@ -34,6 +36,8 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
     confirmPassword: '',
     accountType: 'CHECKING',
     initialBalance: '0',
+    currency: 'USD',
+    branchId: '',
     setAsActive: false,
     
     // Security Questions
@@ -44,6 +48,27 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
     question3: SECURITY_QUESTIONS[2],
     answer3: ''
   });
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [currRes, branchRes] = await Promise.all([
+          apiClient.get('/currencies/active'),
+          apiClient.get('/mybanker/branches')
+        ]);
+        setCurrencies(currRes.currencies || []);
+        setBranches(branchRes.branches || []);
+        
+        // Set default branch if available
+        if (branchRes.branches?.length > 0) {
+          setFormData(prev => ({ ...prev, branchId: branchRes.branches[0].id }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch modal data:', error);
+      }
+    };
+    if (isOpen) fetchData();
+  }, [isOpen]);
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -126,6 +151,8 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
         password: formData.password,
         accountType: formData.accountType,
         initialBalance: parseFloat(formData.initialBalance),
+        currency: formData.currency,
+        branchId: formData.branchId,
         setAsActive: formData.setAsActive,
         securityQuestions: [
           { question: formData.question1, answer: formData.answer1 },
@@ -398,6 +425,40 @@ export const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
                   className={`w-full px-4 py-2 bg-slate-900 border ${errors.initialBalance ? 'border-red-500' : 'border-slate-700'} rounded-lg text-white focus:ring-2 focus:ring-indigo-500`}
                 />
                 {errors.initialBalance && <p className="text-red-400 text-xs mt-1">{errors.initialBalance}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Currency *
+                </label>
+                <select
+                  name="currency"
+                  value={formData.currency}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500"
+                >
+                  {currencies.map(curr => (
+                    <option key={curr.id} value={curr.code}>{curr.code} - {curr.name}</option>
+                  ))}
+                  {currencies.length === 0 && <option value="USD">USD - US Dollar</option>}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Bank Branch *
+                </label>
+                <select
+                  name="branchId"
+                  value={formData.branchId}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500"
+                >
+                  {branches.map(branch => (
+                    <option key={branch.id} value={branch.id}>{branch.name} ({branch.location})</option>
+                  ))}
+                  {branches.length === 0 && <option value="">No Branches Available</option>}
+                </select>
               </div>
 
               <div className="md:col-span-2">

@@ -16,6 +16,7 @@ export const EditUserModal = ({ isOpen, onClose, userId, onSuccess }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
   const [errors, setErrors] = useState({});
+  const [branches, setBranches] = useState([]);
   
   const [formData, setFormData] = useState({
     // Personal
@@ -38,6 +39,7 @@ export const EditUserModal = ({ isOpen, onClose, userId, onSuccess }) => {
     accountType: '',
     loginPreference: '',
     isAdmin: false,
+    branchId: '',
     
     // Password (optional)
     newPassword: '',
@@ -54,6 +56,18 @@ export const EditUserModal = ({ isOpen, onClose, userId, onSuccess }) => {
     // Profile Picture
     profilePhoto: null
   });
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await apiClient.get('/mybanker/branches');
+        setBranches(response.branches || []);
+      } catch (error) {
+        console.error('Failed to fetch branches:', error);
+      }
+    };
+    fetchBranches();
+  }, []);
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -89,6 +103,7 @@ export const EditUserModal = ({ isOpen, onClose, userId, onSuccess }) => {
         accountType: userData.accountType || 'CHECKING',
         loginPreference: userData.loginPreference || 'question',
         isAdmin: userData.isAdmin || false,
+        branchId: userData.branchId || '',
         newPassword: '',
         confirmPassword: '',
         question1: userData.securityQuestions?.[0]?.question || SECURITY_QUESTIONS[0],
@@ -186,6 +201,7 @@ export const EditUserModal = ({ isOpen, onClose, userId, onSuccess }) => {
       updateData.append('accountType', formData.accountType);
       updateData.append('loginPreference', formData.loginPreference);
       updateData.append('isAdmin', formData.isAdmin);
+      updateData.append('branchId', formData.branchId);
       
       // Password (if provided)
       if (formData.newPassword) {
@@ -544,6 +560,23 @@ export const EditUserModal = ({ isOpen, onClose, userId, onSuccess }) => {
                   >
                     <option value="question">Security Question</option>
                     <option value="code">Backup Code</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Bank Branch
+                  </label>
+                  <select
+                    name="branchId"
+                    value={formData.branchId}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">No Branch Assigned</option>
+                    {branches.map(branch => (
+                      <option key={branch.id} value={branch.id}>{branch.name} ({branch.location})</option>
+                    ))}
                   </select>
                 </div>
               </div>

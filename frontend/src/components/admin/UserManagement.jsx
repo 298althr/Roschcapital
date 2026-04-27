@@ -22,13 +22,14 @@ export const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [filterStatus, filterKYC]);
+  }, [filterStatus, filterKYC, searchTerm]);
 
   const fetchUsers = async () => {
     try {
       const params = new URLSearchParams();
       if (filterStatus !== 'all') params.append('accountStatus', filterStatus);
       if (filterKYC !== 'all') params.append('kycStatus', filterKYC);
+      if (searchTerm) params.append('search', searchTerm);
       
       const response = await apiClient.get(`/mybanker/users?${params.toString()}`);
       setUsers(response.users || []);
@@ -80,15 +81,8 @@ export const UserManagement = () => {
     }
   };
 
-  const filteredUsers = users.filter(user => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      user.email?.toLowerCase().includes(searchLower) ||
-      user.firstName?.toLowerCase().includes(searchLower) ||
-      user.lastName?.toLowerCase().includes(searchLower) ||
-      user.accountNumber?.includes(searchTerm)
-    );
-  });
+  // Users are now filtered on the backend
+  const displayUsers = users;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -234,14 +228,14 @@ export const UserManagement = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700">
-              {filteredUsers.length === 0 ? (
+              {displayUsers.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="px-6 py-12 text-center text-slate-400">
                     No users found
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                displayUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-slate-700/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
